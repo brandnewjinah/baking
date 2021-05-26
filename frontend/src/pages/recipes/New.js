@@ -9,8 +9,13 @@ import { Input } from "../../components/Input";
 import { categoryOptions, authorOptions } from "../../data/recipeData";
 import { Button } from "../../components/Buttons";
 
-const New = () => {
+//redux
+import { connect } from "react-redux";
+import { addRecipe } from "../../reducers/recipeReducer";
+
+const New = (props) => {
   const [recipe, setRecipe] = useState({
+    id: 1,
     name: "",
     category: "",
     author: "",
@@ -30,7 +35,9 @@ const New = () => {
     setRecipe(userInput);
   };
 
-  console.log(recipe);
+  const handleNext = () => {
+    props.addRecipe(recipe);
+  };
 
   return (
     <Wrapper>
@@ -94,7 +101,7 @@ const New = () => {
         />
       </Item>
       <Buttons>
-        <Button label="Next" variant="primary" />
+        <Button label="Next" variant="primary" handleClick={handleNext} />
       </Buttons>
     </Wrapper>
   );
@@ -126,4 +133,10 @@ const Buttons = styled.div`
   margin: 4rem 0;
 `;
 
-export default New;
+const mapStateToProps = (state) => {
+  return {
+    recipes: state.recipes.recipes,
+  };
+};
+
+export default connect(mapStateToProps, { addRecipe })(New);
