@@ -28,6 +28,7 @@ type StyleProps = {
 };
 
 export const Input: FC<Props> = ({
+  id,
   label,
   value,
   required,
@@ -62,7 +63,7 @@ export const Input: FC<Props> = ({
         <InputTag
           placeholder={placeholder}
           shape={shape}
-          id={name}
+          id={id ? id : name}
           className={`${small && "small"} ${error && "error"}`}
           type={type === "password" && isPassword ? "password" : "text"}
           name={name}

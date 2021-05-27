@@ -1,21 +1,23 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import styled, { css } from "styled-components";
 import Select from "react-select";
 
 //import componts
 import { Input } from "../../components/Input";
+import { Button } from "../../components/Buttons";
 
 //local data
 import { categoryOptions, authorOptions } from "../../data/recipeData";
-import { Button } from "../../components/Buttons";
 
 //redux
 import { connect } from "react-redux";
 import { addRecipe } from "../../reducers/recipeReducer";
 
 const New = (props) => {
+  const history = useHistory();
   const [recipe, setRecipe] = useState({
-    id: 1,
+    id: 0,
     name: "",
     category: "",
     author: "",
@@ -36,7 +38,12 @@ const New = (props) => {
   };
 
   const handleNext = () => {
-    props.addRecipe(recipe);
+    let newId =
+      props.recipes && props.recipes.length > 0 ? props.recipes.length + 1 : 1;
+
+    let newRecipe = { ...recipe, id: newId };
+    props.addRecipe(newRecipe);
+    history.push(`/recipes/${newId}/ingredients`);
   };
 
   return (

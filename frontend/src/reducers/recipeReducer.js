@@ -1,11 +1,23 @@
 // Action types
 const ADD_RECIPE = "ADD_RECIPE";
+const ADD_INGREDIENTS = "ADD_INGREDIENTS";
 
 // Action creators
 export const addRecipe = (item) => {
   return (dispatch) => {
     dispatch({
       type: ADD_RECIPE,
+      payload: {
+        item,
+      },
+    });
+  };
+};
+
+export const addIngredients = (item) => {
+  return (dispatch) => {
+    dispatch({
+      type: ADD_INGREDIENTS,
       payload: {
         item,
       },
@@ -25,6 +37,14 @@ const reducer = (state = initialState, action) => {
     let newRecipes = [...state.recipes, newItem];
 
     return { ...state, recipes: newRecipes };
+  }
+
+  if (action.type === ADD_INGREDIENTS) {
+    let newIngredients = action.payload.item;
+    console.log(newIngredients);
+    // let newRecipes = [...state.recipes, newItem];
+
+    // return { ...state, recipes: newRecipes };
   }
 
   return state;
