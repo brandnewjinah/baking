@@ -11,12 +11,15 @@ export interface Props {
   value?: string;
   required?: boolean;
   error?: string;
-  type?: "text" | "password";
+  type?: "text" | "password" | "number";
   placeholder?: string;
   id?: any;
   small?: boolean;
   shape?: "underline" | "default";
   margin?: string;
+  autofocus?: boolean;
+  disabled?: boolean;
+  inputmode?: "url" | "tel" | "email" | "numeric" | undefined;
   handleChange?: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -34,11 +37,14 @@ export const Input: FC<Props> = ({
   required,
   type,
   name,
+  autofocus,
   error,
   small,
   shape,
   margin,
   placeholder,
+  disabled,
+  inputmode,
   handleChange,
 }) => {
   const [isPassword, setIsPassword] = useState(true);
@@ -65,9 +71,18 @@ export const Input: FC<Props> = ({
           shape={shape}
           id={id ? id : name}
           className={`${small && "small"} ${error && "error"}`}
-          type={type === "password" && isPassword ? "password" : "text"}
+          type={
+            type === "password" && isPassword
+              ? "password"
+              : type === "number"
+              ? "number"
+              : "text"
+          }
+          inputMode={inputmode}
           name={name}
           value={value}
+          disabled={disabled}
+          // autoFocus={true}
           aria-label={name}
           aria-required={required}
           aria-invalid={error ? true : false}

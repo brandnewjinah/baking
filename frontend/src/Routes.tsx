@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import New from "./pages/recipes/New";
 import NewIngredients from "./pages/recipes/NewIngredients";
+import NewDirections from "./pages/recipes/NewDirections";
 
 const Routes = () => {
   return (
@@ -20,6 +21,11 @@ const Routes = () => {
             exact
             path="/recipes/:recipeId/ingredients"
             component={NewIngredients}
+          />
+          <Route
+            exact
+            path="/recipes/:recipeId/directions"
+            component={NewDirections}
           />
         </Layout>
       </Switch>

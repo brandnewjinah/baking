@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import Select from "react-select";
 import styled, { css } from "styled-components";
 
 //import componts
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Buttons";
+
+//import token
+import { spacing, neutral } from "../../components/token";
 
 //local data
 import { groupedOptions } from "../../data/ingredientData";
@@ -16,13 +19,13 @@ import { connect } from "react-redux";
 import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
+  const history = useHistory();
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
 
   const [ingredients, setIngredients] = useState([
-    { id: 1, ingredient: "", amount: "", unit: "" },
-    { id: 2, ingredient: "", amount: "", unit: "" },
+    { id: 1, ingredient: "", amount: "", unit: "g" },
   ]);
 
   const formatGroupLabel = (data) => <span>{data.label}</span>;
@@ -40,6 +43,19 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
+  const handleUnitSelect = (item, name) => {
+    const newIngredients = [...ingredients];
+    const index = newIngredients.findIndex((item) => item.id === name.name);
+    let thisIngredient = newIngredients[index];
+    thisIngredient = {
+      ...thisIngredient,
+      unit: item.value,
+    };
+    newIngredients[index] = thisIngredient;
+
+    setIngredients(newIngredients);
+  };
+
   const handleInput = ({ currentTarget: input }) => {
     let newIngredients = [...ingredients];
     let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
@@ -51,26 +67,20 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
-  console.log(ingredients);
-
   const handleAdd = () => {
     let NewIngredients = [...ingredients];
     let id = NewIngredients[NewIngredients.length - 1].id + 1;
     NewIngredients = [
       ...NewIngredients,
-      { id: id, ingredient: "", amount: "", unit: "" },
+      { id: id, ingredient: "", amount: "", unit: "g" },
     ];
     setIngredients(NewIngredients);
   };
 
   const handleNext = () => {
-    props.addIngredients(ingredients);
+    props.addIngredients(ingredients, recipeId);
 
-    // let newId =
-    //   props.recipes && props.recipes.length > 0 ? props.recipes.length + 1 : 1;
-    // let newRecipe = { ...recipe, id: newId };
-
-    // history.push(`/recipes/${newId}/ingredients`);
+    history.push(`/recipes/${recipeId}/directions`);
   };
 
   return (
@@ -79,43 +89,48 @@ const NewIngredients = (props) => {
         <h2>{thisRecipe.name}</h2>
         <p>{thisRecipe.category}</p>
       </Header>
-      {ingredients.map((item, idx) => (
-        <Item key={idx}>
-          <div className="left">
-            <Select
-              name={item.id}
-              options={groupedOptions}
-              formatGroupLabel={formatGroupLabel}
-              onChange={(event, name) => handleSelect(event, name)}
-            />
-          </div>
-          <div className="center">
-            <Input
-              id={item.id}
-              placeholder="Amount"
-              name="amount"
-              value={item.amount}
-              handleChange={handleInput}
-            />
-          </div>
-          <div className="right">
-            <Select
-              name="metricMeasure"
-              // placeholder="Select"
-              defaultValue={{ label: "gram", value: "g", id: 1 }}
-              options={
-                metricMeasure &&
-                metricMeasure.map((item) => ({
-                  label: item.name,
-                  value: item.name,
-                  id: item.id,
-                }))
-              }
-              // onChange={(event, name) => handleCategorySelect(event, name)}
-            />
-          </div>
-        </Item>
-      ))}
+      <Section>
+        <header>Ingredients</header>
+        {ingredients.map((item, idx) => (
+          <Item key={idx}>
+            <div className="full">
+              <Select
+                name={item.id}
+                options={groupedOptions}
+                formatGroupLabel={formatGroupLabel}
+                onChange={(event, name) => handleSelect(event, name)}
+              />
+            </div>
+            <div className="flex">
+              <div className="half">
+                <Input
+                  id={item.id}
+                  placeholder="Amount"
+                  name="amount"
+                  type="number"
+                  value={item.amount}
+                  handleChange={handleInput}
+                />
+              </div>
+              <div className="half">
+                <Select
+                  name={item.id}
+                  defaultValue={{ label: "gram", value: "g", id: 1 }}
+                  options={
+                    metricMeasure &&
+                    metricMeasure.map((item) => ({
+                      label: item.name,
+                      value: item.value,
+                      id: item.id,
+                    }))
+                  }
+                  onChange={(event, name) => handleUnitSelect(event, name)}
+                />
+              </div>
+            </div>
+          </Item>
+        ))}
+      </Section>
       <Add>
         <Button label="Add More" handleClick={handleAdd} />
       </Add>
@@ -142,22 +157,26 @@ const Header = styled.header`
   text-align: center;
 `;
 
-const Item = styled.div`
-  ${Flex}
-  justify-content: space-between;
+const Section = styled.section``;
+
+const Item = styled.article`
   width: 100%;
-  margin: 1.5rem 0;
+  border-bottom: 1px solid ${neutral[200]};
+  padding: ${spacing.l} 0;
 
-  .left {
-    flex: 0 0 49%;
+  .full {
+    flex: 0 0 100%;
+    padding: ${spacing.xxs} 0;
   }
 
-  .center {
-    flex: 0 0 19%;
+  .half {
+    flex: 0 0 49.5%;
+    padding: ${spacing.xxs} 0;
   }
 
-  .right {
-    flex: 0 0 29%;
+  .flex {
+    ${Flex}
+    justify-content: space-between;
   }
 `;
 
