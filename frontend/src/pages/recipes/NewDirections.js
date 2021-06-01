@@ -3,7 +3,8 @@ import { useParams, useHistory } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 //import componts
-import { Input } from "../../components/Input";
+import { Input, TimeInput } from "../../components/Input";
+
 import { Button } from "../../components/Buttons";
 
 //import token
@@ -64,16 +65,16 @@ const NewDirections = (props) => {
           <Item key={idx}>
             <div className="flex">
               <div className="half">{item.id}</div>
-              <div className="onehalf">
-                <Input
+              <div className="two">
+                <TimeInput
                   id={`${item.id}?timestamp`}
                   name="timestamp"
-                  placeholder="00:00"
+                  placeholder="MM:SS"
                   value={item.timestamp}
                   handleChange={handleInput}
                 />
               </div>
-              <div className="eight">
+              <div className="sevenhalf">
                 <Input
                   id={`${item.id}?direction`}
                   name="direction"
@@ -129,13 +130,13 @@ const Item = styled.article`
     padding: ${spacing.xxs} 0;
   }
 
-  .onehalf {
-    flex: 0 0 14.5%;
+  .two {
+    flex: 0 0 19.5%;
     padding: ${spacing.xxs} 0;
   }
 
-  .eight {
-    flex: 0 0 79.5%;
+  .sevenhalf {
+    flex: 0 0 74.5%;
     padding: ${spacing.xxs} 0;
   }
 `;

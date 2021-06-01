@@ -1,3 +1,4 @@
+import { time } from "node:console";
 import React, { ChangeEvent, FC, useState } from "react";
 
 //import styles and assets
@@ -138,6 +139,62 @@ export const Floating: FC<Props> = ({
   );
 };
 
+export const TimeInput: FC<Props> = ({
+  id,
+  label,
+  // value,
+  required,
+  name,
+  error,
+  small,
+  shape,
+  margin,
+  placeholder,
+  disabled,
+  // // handleChange,
+}) => {
+  const [value, setValue] = useState("");
+
+  const handleTimeInput = ({ currentTarget: time }: any) => {
+    let replaceTime = time.value.replace(/\:/g, "");
+
+    if (replaceTime.length >= 3 && replaceTime.length < 5) {
+      let min = replaceTime.substring(0, 2);
+      let sec = replaceTime.substring(2, 4);
+      time.value = min + ":" + sec;
+    }
+    setValue(time.value);
+  };
+
+  return (
+    <Wrapper margin={margin} shape={shape}>
+      <label htmlFor={name} aria-hidden="true">
+        {label}
+        {required && " *"}
+      </label>
+      <InputTag
+        placeholder={placeholder}
+        shape={shape}
+        id={id ? id : name}
+        className={`${small && "small"} ${error && "error"} timeInput`}
+        style={{ textAlign: "right" }}
+        type="text"
+        inputMode="numeric"
+        maxLength={5}
+        name={name}
+        value={value}
+        disabled={disabled}
+        aria-label={name}
+        aria-required={required}
+        aria-invalid={error ? true : false}
+        onChange={handleTimeInput}
+      />
+
+      {error && <p className="helper">{error}</p>}
+    </Wrapper>
+  );
+};
+
 const Wrapper = styled.div<StyleProps>`
   margin: ${(props) => `${props.margin} 0`};
 
@@ -183,7 +240,7 @@ const InputTag = styled.input<StyleProps>`
   border-right: ${(props) =>
     props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
   border-bottom: 1px solid #d2d2d7;
-  padding: 0 0 0 0.875rem;
+  padding: 0 0 0 0.75rem;
   appearance: none;
 
   &:focus {
