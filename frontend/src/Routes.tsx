@@ -9,6 +9,8 @@ import Home from "./pages/Home";
 import New from "./pages/recipes/New";
 import NewIngredients from "./pages/recipes/NewIngredients";
 import NewDirections from "./pages/recipes/NewDirections";
+import Recipes from "./pages/recipes/Recipes";
+import RecipeDetail from "./pages/recipes/RecipeDetail";
 
 const Routes = () => {
   return (
@@ -16,7 +18,9 @@ const Routes = () => {
       <Switch>
         <Layout>
           <Route exact path="/" component={Home} />
+          <Route exact path="/recipes/" component={Recipes} />
           <Route exact path="/recipes/add" component={New} />
+          <Route exact path="/recipes/:recipeId" component={RecipeDetail} />
           <Route
             exact
             path="/recipes/:recipeId/ingredients"
