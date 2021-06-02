@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 //import componts
-import { Input, TimeInput } from "../../components/Input";
+import { Input } from "../../components/Input";
 
 import { Button } from "../../components/Buttons";
 
@@ -32,6 +32,19 @@ const NewDirections = (props) => {
     let newDirections = [...directions];
     let index = newDirections.findIndex((i) => i.id === parseInt(id));
     let currentItem = { ...newDirections[index] };
+
+    //if input.name is timestamp
+    if (input.name === "timestamp") {
+      let replaceTime = input.value.replace(/\:/g, "");
+
+      if (replaceTime.length >= 3 && replaceTime.length < 5) {
+        let min = replaceTime.substring(0, 2);
+        let sec = replaceTime.substring(2, 4);
+        input.value = min + ":" + sec;
+      }
+      currentItem.timestamp = input.value;
+    }
+
     currentItem[input.name] = input.value;
     newDirections[index] = currentItem;
     setDirections(newDirections);
@@ -66,10 +79,12 @@ const NewDirections = (props) => {
             <div className="flex">
               <div className="half">{item.id}</div>
               <div className="two">
-                <TimeInput
+                <Input
                   id={`${item.id}?timestamp`}
                   name="timestamp"
                   placeholder="MM:SS"
+                  align="right"
+                  maxLength={5}
                   value={item.timestamp}
                   handleChange={handleInput}
                 />

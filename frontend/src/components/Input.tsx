@@ -1,4 +1,3 @@
-import { time } from "node:console";
 import React, { ChangeEvent, FC, useState } from "react";
 
 //import styles and assets
@@ -18,9 +17,12 @@ export interface Props {
   small?: boolean;
   shape?: "underline" | "default";
   margin?: string;
+  align?: string;
   autofocus?: boolean;
   disabled?: boolean;
   inputmode?: "url" | "tel" | "email" | "numeric" | undefined;
+  maxLength?: number;
+  handleInput: (text: string) => void;
   handleChange?: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -29,6 +31,7 @@ export interface Props {
 type StyleProps = {
   shape?: string | undefined;
   margin?: string | undefined;
+  align?: string | undefined;
 };
 
 export const Input: FC<Props> = ({
@@ -38,7 +41,7 @@ export const Input: FC<Props> = ({
   required,
   type,
   name,
-  autofocus,
+  align,
   error,
   small,
   shape,
@@ -46,6 +49,7 @@ export const Input: FC<Props> = ({
   placeholder,
   disabled,
   inputmode,
+  maxLength,
   handleChange,
 }) => {
   const [isPassword, setIsPassword] = useState(true);
@@ -70,6 +74,7 @@ export const Input: FC<Props> = ({
         <InputTag
           placeholder={placeholder}
           shape={shape}
+          align={align}
           id={id ? id : name}
           className={`${small && "small"} ${error && "error"}`}
           type={
@@ -83,7 +88,7 @@ export const Input: FC<Props> = ({
           name={name}
           value={value}
           disabled={disabled}
-          // autoFocus={true}
+          maxLength={maxLength}
           aria-label={name}
           aria-required={required}
           aria-invalid={error ? true : false}
@@ -139,62 +144,6 @@ export const Floating: FC<Props> = ({
   );
 };
 
-export const TimeInput: FC<Props> = ({
-  id,
-  label,
-  // value,
-  required,
-  name,
-  error,
-  small,
-  shape,
-  margin,
-  placeholder,
-  disabled,
-  // // handleChange,
-}) => {
-  const [value, setValue] = useState("");
-
-  const handleTimeInput = ({ currentTarget: time }: any) => {
-    let replaceTime = time.value.replace(/\:/g, "");
-
-    if (replaceTime.length >= 3 && replaceTime.length < 5) {
-      let min = replaceTime.substring(0, 2);
-      let sec = replaceTime.substring(2, 4);
-      time.value = min + ":" + sec;
-    }
-    setValue(time.value);
-  };
-
-  return (
-    <Wrapper margin={margin} shape={shape}>
-      <label htmlFor={name} aria-hidden="true">
-        {label}
-        {required && " *"}
-      </label>
-      <InputTag
-        placeholder={placeholder}
-        shape={shape}
-        id={id ? id : name}
-        className={`${small && "small"} ${error && "error"} timeInput`}
-        style={{ textAlign: "right" }}
-        type="text"
-        inputMode="numeric"
-        maxLength={5}
-        name={name}
-        value={value}
-        disabled={disabled}
-        aria-label={name}
-        aria-required={required}
-        aria-invalid={error ? true : false}
-        onChange={handleTimeInput}
-      />
-
-      {error && <p className="helper">{error}</p>}
-    </Wrapper>
-  );
-};
-
 const Wrapper = styled.div<StyleProps>`
   margin: ${(props) => `${props.margin} 0`};
 
@@ -242,6 +191,7 @@ const InputTag = styled.input<StyleProps>`
   border-bottom: 1px solid #d2d2d7;
   padding: 0 0 0 0.75rem;
   appearance: none;
+  text-align: ${(props) => (props.align === "right" ? "right" : "left")};
 
   &:focus {
     box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.6);
