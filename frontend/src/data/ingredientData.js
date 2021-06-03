@@ -67,6 +67,24 @@ export const sweetener = [
   },
 ];
 
+export const eggs = [
+  {
+    id: 160,
+    label: "Eggs",
+    value: "Eggs",
+  },
+  {
+    id: 161,
+    label: "Egg White",
+    value: "Egg White",
+  },
+  {
+    id: 162,
+    label: "Egg Yolk",
+    value: "Egg Yolk",
+  },
+];
+
 export const fatOil = [
   {
     id: 160,
@@ -138,6 +156,10 @@ export const groupedOptions = [
   {
     label: "Sweetener",
     options: sweetener,
+  },
+  {
+    label: "Eggs",
+    options: eggs,
   },
   {
     label: "Fats & Oil",

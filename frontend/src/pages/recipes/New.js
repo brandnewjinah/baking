@@ -7,6 +7,9 @@ import Select from "react-select";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Buttons";
 
+//import token
+import { spacing, neutral, tertiaryFont } from "../../components/token";
+
 //local data
 import { categoryOptions, authorOptions } from "../../data/recipeData";
 
@@ -49,7 +52,7 @@ const New = (props) => {
   return (
     <Wrapper>
       <Header>
-        <h2>New Recipe</h2>
+        <h4 className="title">New Recipe</h4>
       </Header>
       <Item>
         <Input
@@ -122,6 +125,12 @@ const Wrapper = styled.div`
 
 const Header = styled.header`
   text-align: center;
+
+  .title {
+    font-family: ${tertiaryFont};
+    color: ${neutral[600]};
+    margin: ${spacing.xxxs} 0;
+  }
 `;
 
 const Item = styled.div`

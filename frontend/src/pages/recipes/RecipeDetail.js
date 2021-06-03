@@ -1,16 +1,28 @@
-import React, { useRef } from "react";
-import { useParams } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import ReactPlayer from "react-player";
-import styled, { css } from "styled-components";
+import "./styles.css";
+import { Modal } from "react-responsive-modal";
+import styled from "styled-components";
+
+//import components
+import { Input } from "../../components/Input";
 
 //import token
-import { spacing, neutral } from "../../components/token";
+import {
+  spacing,
+  neutral,
+  typeScale,
+  primaryColor,
+  tertiaryFont,
+} from "../../components/token";
 
 //redux
 import { connect } from "react-redux";
 import { addDirections } from "../../reducers/recipeReducer";
 
 const RecipeDetail = (props) => {
+  //this recipe
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
 
@@ -18,6 +30,10 @@ const RecipeDetail = (props) => {
     (item) => item.id === parseInt(recipeId)
   );
 
+  //this ingredients
+  const [ingredients, setIngredients] = useState([...thisRecipe.ingredients]);
+
+  //react player
   const player = useRef(null);
 
   const handleTimestamp = (time) => {
@@ -32,6 +48,33 @@ const RecipeDetail = (props) => {
     }
   };
 
+  //modal
+  const [open, setOpen] = useState(false);
+  const toggleModal = () => setOpen(!open);
+  const [value, setValue] = useState("");
+
+  const handleChange = ({ currentTarget: input }) => {
+    let id = parseInt(input.id);
+    let reference = input.value;
+    let newIngredients = [...ingredients];
+    let index = newIngredients.findIndex((i) => i.id === parseInt(id));
+    let currentItem = { ...newIngredients[index] };
+    currentItem[input.name] = reference;
+    newIngredients[index] = currentItem;
+    setIngredients(newIngredients);
+
+    const filtered = newIngredients.filter((item) => item.id != id);
+    filtered.map((item) => (item.amount = item.amount * reference));
+
+    let updatedIngredients = [...filtered, currentItem];
+
+    setIngredients(updatedIngredients);
+  };
+
+  const calcNew = (amount) => {
+    return amount;
+  };
+
   return (
     <>
       {!thisRecipe ? (
@@ -39,8 +82,9 @@ const RecipeDetail = (props) => {
       ) : (
         <Wrapper>
           <Header>
-            <h2>{thisRecipe.name}</h2>
-            <p>{thisRecipe.category}</p>
+            <p className="overline">{thisRecipe.category}</p>
+            <h4 className="title">{thisRecipe.name}</h4>
+            <p className="helper">by {thisRecipe.author}</p>
           </Header>
           <PlayerContainer>
             <ReactPlayer
@@ -53,32 +97,58 @@ const RecipeDetail = (props) => {
               height="100%"
             />
           </PlayerContainer>
-
           <Section>
-            <h4>Ingredients</h4>
-            {thisRecipe.ingredients.map((item, idx) => (
-              <Item>
-                <div className="left">{`${item.amount}${item.unit}`}</div>
-                <div>{item.ingredient}</div>
-              </Item>
-            ))}
+            <Article>
+              <Flex>
+                <h5>Ingredients</h5>
+                <div className="txtBtn" onClick={toggleModal}>
+                  convert
+                </div>
+
+                <Modal open={open} onClose={toggleModal} center>
+                  <h6>Convert</h6>
+                  {ingredients.map((item, idx) => (
+                    <Item key={idx}>
+                      <div className="left">
+                        <Input
+                          id={item.id}
+                          name="amount"
+                          value={item.amount}
+                          handleChange={handleChange}
+                        />
+                      </div>
+                      <div>{item.ingredient}</div>
+                    </Item>
+                  ))}
+                </Modal>
+              </Flex>
+              {ingredients.map((item, idx) => (
+                <Item key={idx}>
+                  <div className="left">{`${item.amount}${item.unit}`}</div>
+                  <div>{item.ingredient}</div>
+                </Item>
+              ))}
+            </Article>
+            <Article>
+              <h5>Directions</h5>
+              {thisRecipe.directions.map((item, idx) => (
+                <Item key={idx}>
+                  <div
+                    className="left"
+                    onClick={() => handleTimestamp(item.timestamp)}
+                  >
+                    {item.timestamp}
+                  </div>
+                  <div>
+                    {/* <span>{`${idx + 1}. `}</span> */}
+                    <span>{item.direction}</span>
+                  </div>
+                </Item>
+              ))}
+            </Article>
           </Section>
           <Section>
-            <h4>Directions</h4>
-            {thisRecipe.directions.map((item, idx) => (
-              <Item>
-                <div
-                  className="left"
-                  onClick={() => handleTimestamp(item.timestamp)}
-                >
-                  {item.timestamp}
-                </div>
-                <div>
-                  <span>{`${idx + 1}. `}</span>
-                  <span>{item.direction}</span>
-                </div>
-              </Item>
-            ))}
+            <Link to={`/recipes/edit/${recipeId}`}>edit</Link>
           </Section>
         </Wrapper>
       )}
@@ -86,9 +156,9 @@ const RecipeDetail = (props) => {
   );
 };
 
-const Flex = css`
+const Flex = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: space-between;
 `;
 
 const Wrapper = styled.div`
@@ -99,9 +169,29 @@ const Wrapper = styled.div`
 
 const Header = styled.header`
   text-align: center;
+  padding-bottom: ${spacing.xl};
+
+  .overline {
+    text-transform: uppercase;
+    font-size: ${typeScale.sbody};
+    font-weight: 500;
+    color: ${primaryColor.gold};
+  }
+
+  .title {
+    font-family: ${tertiaryFont};
+    color: ${neutral[600]};
+    margin: ${spacing.xxxs} 0;
+  }
+
+  .helper {
+    font-size: ${typeScale.sbody};
+    font-weight: 500;
+    color: ${neutral[400]};
+  }
 `;
 
-const PlayerContainer = styled.div`
+const PlayerContainer = styled.section`
   position: relative;
   padding-top: 56.25%;
 
@@ -113,16 +203,38 @@ const PlayerContainer = styled.div`
 `;
 
 const Section = styled.section`
-  margin: 1em 0 2em;
+  padding: ${spacing.xl} 0;
+`;
+
+const Article = styled.article`
+  padding: ${spacing.l} 0;
+
+  h5 {
+    font-family: ${tertiaryFont};
+    font-weight: 600;
+    color: ${neutral[600]};
+    padding-bottom: ${spacing.m};
+  }
+
+  .txtBtn {
+    font-size: ${typeScale.helper};
+    cursor: pointer;
+  }
+
+  .react-responsive-modal-modal {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const Item = styled.div`
-  ${Flex}
-  border-bottom: 1px solid ${neutral[300]};
+  display: flex;
+  font-size: ${typeScale.sbody};
+  border-bottom: 1px solid ${neutral[100]};
   padding: ${spacing.xxs} 0;
 
   .left {
-    flex: 0 0 10%;
+    flex: 0 0 20%;
     cursor: pointer;
 
     &:hover {

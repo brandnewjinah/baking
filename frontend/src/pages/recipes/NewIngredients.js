@@ -8,7 +8,13 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Buttons";
 
 //import token
-import { spacing, neutral } from "../../components/token";
+import {
+  spacing,
+  neutral,
+  tertiaryFont,
+  typeScale,
+  primaryColor,
+} from "../../components/token";
 
 //local data
 import { groupedOptions } from "../../data/ingredientData";
@@ -86,8 +92,8 @@ const NewIngredients = (props) => {
   return (
     <Wrapper>
       <Header>
-        <h2>{thisRecipe.name}</h2>
-        <p>{thisRecipe.category}</p>
+        <p className="overline">{thisRecipe.category}</p>
+        <h4 className="title">{thisRecipe.name}</h4>
       </Header>
       <Section>
         <header>Ingredients</header>
@@ -155,6 +161,19 @@ const Wrapper = styled.div`
 
 const Header = styled.header`
   text-align: center;
+
+  .overline {
+    text-transform: uppercase;
+    font-size: ${typeScale.sbody};
+    font-weight: 500;
+    color: ${primaryColor.gold};
+  }
+
+  .title {
+    font-family: ${tertiaryFont};
+    color: ${neutral[600]};
+    margin: ${spacing.xxxs} 0;
+  }
 `;
 
 const Section = styled.section``;
