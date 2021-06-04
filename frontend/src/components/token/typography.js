@@ -11,7 +11,7 @@ export const typeScale = {
   header6: "1.2rem",
   body: "1rem",
   sbody: ".875rem",
-  helper: "0.8rem",
+  helper: "0.825rem",
   caption: "0.64rem",
 };
 

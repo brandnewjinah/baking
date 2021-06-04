@@ -20,12 +20,13 @@ const Routes = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/recipes/" component={Recipes} />
           <Route exact path="/recipes/add" component={New} />
+          <Route exact path="/recipe/:recipeId" component={RecipeDetail} />
           <Route
             exact
             path="/recipes/edit/:recipeId"
             component={RecipeDetail}
           />
-          <Route exact path="/recipes/:recipeId" component={RecipeDetail} />
+
           <Route
             exact
             path="/recipes/:recipeId/ingredients"

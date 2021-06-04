@@ -18,14 +18,6 @@ const SideMenu = ({ isOpen, toggle }) => {
             </li>
           ))}
         </Menu>
-        {/* <UtilMenu>
-          <div className="item">
-            <MenuLink to="/">Signup</MenuLink>
-          </div>
-          <div className="item">
-            <MenuLink to="/">hello</MenuLink>
-          </div>
-        </UtilMenu> */}
       </MenuContainer>
     </Wrapper>
   );
@@ -66,14 +58,6 @@ const MenuLink = styled(Link)`
 
   cursor: pointer;
   transition: 0.2s ease-in-out;
-`;
-
-const UtilMenu = styled.div`
-  .item {
-    text-align: center;
-    padding: 1.25rem 0;
-    border-bottom: 1px solid ${neutral[100]};
-  }
 `;
 
 export default SideMenu;

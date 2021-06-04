@@ -6,6 +6,7 @@ import Select from "react-select";
 //import componts
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Buttons";
+import ResSelect from "../../components/ResSelect";
 
 //import token
 import { spacing, neutral, tertiaryFont } from "../../components/token";
@@ -19,6 +20,8 @@ import { addRecipe } from "../../reducers/recipeReducer";
 
 const New = (props) => {
   const history = useHistory();
+
+  //this recipe
   const [recipe, setRecipe] = useState({
     id: 0,
     name: "",
@@ -28,18 +31,37 @@ const New = (props) => {
     photo: "",
   });
 
+  //Add name, url
   const handleChange = ({ currentTarget: input }) => {
     const userInput = { ...recipe };
     userInput[input.name] = input.value;
     setRecipe(userInput);
   };
 
+  //Add category and author
   const handleCategorySelect = (item, name) => {
     const userInput = { ...recipe };
     userInput[name.name] = item.value;
     setRecipe(userInput);
   };
 
+  //add new category
+  const [showModal, setShowModal] = useState(false);
+  const setSelected = (id, selected) => {
+    const newRecipe = { ...recipe };
+    newRecipe[id] = selected;
+    setRecipe(newRecipe);
+  };
+
+  const handleModal = () => {
+    // document.body.style.overflow !== "hidden"
+    //   ? (document.body.style.overflow = "hidden")
+    //   : (document.body.style.overflow = "scroll");
+
+    setShowModal(!showModal);
+  };
+
+  //Next button
   const handleNext = () => {
     let newId =
       props.recipes && props.recipes.length > 0 ? props.recipes.length + 1 : 1;
@@ -63,35 +85,35 @@ const New = (props) => {
         />
       </Item>
       <Item>
-        <p>Category</p>
-        <Select
-          name="category"
-          placeholder="Select"
-          options={
-            categoryOptions &&
-            categoryOptions.map((item) => ({
-              label: item.name,
-              value: item.name,
-              id: item.id,
-            }))
-          }
-          onChange={(event, name) => handleCategorySelect(event, name)}
+        <p className="label">Category</p>
+        <button onClick={handleModal}>
+          {recipe.category && recipe.category !== undefined
+            ? recipe.category
+            : "Select"}
+        </button>
+        <ResSelect
+          showModal={showModal}
+          setShowModal={setShowModal}
+          id="category"
+          name="Category"
+          data={categoryOptions}
+          setSelected={(id, selected) => setSelected(id, selected)}
         />
       </Item>
       <Item>
-        <p>Author</p>
-        <Select
-          name="author"
-          placeholder="Select"
-          options={
-            authorOptions &&
-            authorOptions.map((item) => ({
-              label: item.name,
-              value: item.name,
-              id: item.id,
-            }))
-          }
-          onChange={(event, name) => handleCategorySelect(event, name)}
+        <p className="label">Author</p>
+        <button onClick={handleModal}>
+          {recipe.category && recipe.category !== undefined
+            ? recipe.author
+            : "Select"}
+        </button>
+        <ResSelect
+          showModal={showModal}
+          setShowModal={setShowModal}
+          id="author"
+          name="Author"
+          data={authorOptions}
+          setSelected={(e, id) => setSelected(e, id)}
         />
       </Item>
       <Item>
@@ -121,6 +143,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   padding: 2rem;
+  overflow: auto;
 `;
 
 const Header = styled.header`
@@ -136,6 +159,21 @@ const Header = styled.header`
 const Item = styled.div`
   width: 100%;
   margin: 1.5rem 0;
+
+  .label {
+    font-size: 0.925rem;
+    color: #94928f;
+  }
+
+  button {
+    background-color: transparent;
+    border: 1px solid #d2d2d7;
+    border-radius: ${spacing.xxxs};
+    padding: ${spacing.s};
+    font-size: 0.9rem;
+    width: 100%;
+    cursor: pointer;
+  }
 `;
 
 const Flex = css`

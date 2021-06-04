@@ -82,8 +82,8 @@ const RecipeDetail = (props) => {
       ) : (
         <Wrapper>
           <Header>
-            <p className="overline">{thisRecipe.category}</p>
-            <h4 className="title">{thisRecipe.name}</h4>
+            <span className="overline">{thisRecipe.category}</span>
+            <h2 className="title">{thisRecipe.name}</h2>
             <p className="helper">by {thisRecipe.author}</p>
           </Header>
           <PlayerContainer>
@@ -97,59 +97,62 @@ const RecipeDetail = (props) => {
               height="100%"
             />
           </PlayerContainer>
-          <Section>
-            <Article>
-              <Flex>
-                <h5>Ingredients</h5>
-                <div className="txtBtn" onClick={toggleModal}>
-                  convert
-                </div>
+          <About>section</About>
+          <Container>
+            <Section>
+              <Article>
+                <Flex>
+                  <h5>Ingredients</h5>
+                  <div className="txtBtn" onClick={toggleModal}>
+                    adjust
+                  </div>
 
-                <Modal open={open} onClose={toggleModal} center>
-                  <h6>Convert</h6>
-                  {ingredients.map((item, idx) => (
-                    <Item key={idx}>
-                      <div className="left">
-                        <Input
-                          id={item.id}
-                          name="amount"
-                          value={item.amount}
-                          handleChange={handleChange}
-                        />
-                      </div>
-                      <div>{item.ingredient}</div>
-                    </Item>
-                  ))}
-                </Modal>
-              </Flex>
-              {ingredients.map((item, idx) => (
-                <Item key={idx}>
-                  <div className="left">{`${item.amount}${item.unit}`}</div>
-                  <div>{item.ingredient}</div>
-                </Item>
-              ))}
-            </Article>
-            <Article>
-              <h5>Directions</h5>
-              {thisRecipe.directions.map((item, idx) => (
-                <Item key={idx}>
-                  <div
-                    className="left"
-                    onClick={() => handleTimestamp(item.timestamp)}
-                  >
-                    {item.timestamp}
-                  </div>
-                  <div>
-                    {/* <span>{`${idx + 1}. `}</span> */}
-                    <span>{item.direction}</span>
-                  </div>
-                </Item>
-              ))}
-            </Article>
-          </Section>
-          <Section>
-            <Link to={`/recipes/edit/${recipeId}`}>edit</Link>
-          </Section>
+                  <Modal open={open} onClose={toggleModal} center>
+                    <h6>Adjust</h6>
+                    {ingredients.map((item, idx) => (
+                      <Item key={idx}>
+                        <div className="left">
+                          <Input
+                            id={item.id}
+                            name="amount"
+                            value={item.amount}
+                            handleChange={handleChange}
+                          />
+                        </div>
+                        <div>{item.ingredient}</div>
+                      </Item>
+                    ))}
+                  </Modal>
+                </Flex>
+                {ingredients.map((item, idx) => (
+                  <Item key={idx}>
+                    <div className="left">{`${item.amount}${item.unit}`}</div>
+                    <div>{item.ingredient}</div>
+                  </Item>
+                ))}
+              </Article>
+              <Article>
+                <h5>Directions</h5>
+                {thisRecipe.directions.map((item, idx) => (
+                  <Item key={idx}>
+                    <div
+                      className="left"
+                      onClick={() => handleTimestamp(item.timestamp)}
+                    >
+                      {item.timestamp}
+                    </div>
+                    <div>
+                      {/* <span>{`${idx + 1}. `}</span> */}
+                      <span>{item.direction}</span>
+                    </div>
+                  </Item>
+                ))}
+              </Article>
+            </Section>
+            <Section>
+              <Link to={`/recipes/edit/${recipeId}`}>edit</Link>
+            </Section>
+          </Container>
         </Wrapper>
       )}
     </>
@@ -164,7 +167,12 @@ const Flex = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: 2rem;
+`;
+
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 0 ${spacing.xxl};
 `;
 
 const Header = styled.header`
@@ -173,9 +181,13 @@ const Header = styled.header`
 
   .overline {
     text-transform: uppercase;
-    font-size: ${typeScale.sbody};
+    font-size: ${typeScale.helper};
     font-weight: 500;
+    letter-spacing: 0.0125rem;
     color: ${primaryColor.gold};
+    border-bottom: 1px solid ${primaryColor.gold};
+    display: inline-block;
+    line-height: 2;
   }
 
   .title {
@@ -185,8 +197,8 @@ const Header = styled.header`
   }
 
   .helper {
-    font-size: ${typeScale.sbody};
-    font-weight: 500;
+    font-size: ${typeScale.helper};
+    font-weight: 400;
     color: ${neutral[400]};
   }
 `;
@@ -200,6 +212,12 @@ const PlayerContainer = styled.section`
     top: 0;
     left: 0;
   }
+`;
+
+const About = styled.section`
+  width: 100;
+  background-color: ${neutral[100]};
+  padding: ${spacing.xl} 0;
 `;
 
 const Section = styled.section`

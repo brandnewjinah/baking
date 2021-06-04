@@ -17,7 +17,7 @@ const Recipes = (props) => {
       </Section>
       <Section>
         {props.recipes.map((item, idx) => (
-          <Link to={`/recipes/${item.id}`}>
+          <Link to={`/recipe/${item.id}`}>
             <div>{item.name}</div>
           </Link>
         ))}

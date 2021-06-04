@@ -49,7 +49,7 @@ const Nav = styled.nav`
   height: 60px;
   background-color: ${neutral[10]};
   padding: ${spacing.xl};
-  z-index: 100;
+  z-index: 10;
 `;
 
 const Left = styled(Link)`

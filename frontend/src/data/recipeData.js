@@ -1,7 +1,7 @@
 export const categoryOptions = [
   {
     id: 1,
-    name: "Yeast Breads and Rolls",
+    name: "Scones",
   },
   {
     id: 2,
@@ -38,6 +38,10 @@ export const categoryOptions = [
   {
     id: 10,
     name: "Plated Desserts",
+  },
+  {
+    id: 11,
+    name: "Yeast Breads and Rolls",
   },
 ];
 
