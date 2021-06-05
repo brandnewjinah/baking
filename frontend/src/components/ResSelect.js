@@ -6,44 +6,30 @@ import { neutral, spacing, typeScale } from "./token";
 
 import { Close } from "../assets/Icons";
 
-const ResSelect = ({
-  showModal,
-  setShowModal,
-  data,
-  setSelected,
-  name,
-  id,
-}) => {
+const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
   const handleSelect = (selected) => {
     setSelected(id, selected);
     setShowModal((prev) => !prev);
   };
 
   return (
-    <>
-      {showModal ? (
-        <Background>
-          <Header>
-            <div className="left">{name}</div>
-            <div
-              className="right"
-              onClick={() => setShowModal((prev) => !prev)}
-            >
-              <Close width={20} height={20} color="#000" stroke={2} />
-            </div>
-          </Header>
-          <Container showModal={showModal}>
-            <Section>
-              {data.map((item, idx) => (
-                <Item key={idx} onClick={() => handleSelect(item.name)}>
-                  <p>{item.name}</p>
-                </Item>
-              ))}
-            </Section>
-          </Container>
-        </Background>
-      ) : null}
-    </>
+    <Background>
+      <Header>
+        <div className="left">{name}</div>
+        <div className="right" onClick={() => setShowModal((prev) => !prev)}>
+          <Close width={20} height={20} color="#000" stroke={2} />
+        </div>
+      </Header>
+      <Container>
+        <Section>
+          {data.map((item, idx) => (
+            <Item key={idx} onClick={() => handleSelect(item.name)}>
+              <p>{item.name}</p>
+            </Item>
+          ))}
+        </Section>
+      </Container>
+    </Background>
   );
 };
 

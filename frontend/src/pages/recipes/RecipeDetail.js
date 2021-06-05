@@ -85,6 +85,9 @@ const RecipeDetail = (props) => {
             <span className="overline">{thisRecipe.category}</span>
             <h2 className="title">{thisRecipe.name}</h2>
             <p className="helper">by {thisRecipe.author}</p>
+            <p className="helper">
+              <Link to={`/recipe/edit/${recipeId}`}>edit</Link>
+            </p>
           </Header>
           <PlayerContainer>
             <ReactPlayer

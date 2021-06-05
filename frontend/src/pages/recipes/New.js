@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 import Select from "react-select";
 
@@ -20,6 +20,22 @@ import { addRecipe } from "../../reducers/recipeReducer";
 
 const New = (props) => {
   const history = useHistory();
+  let location = useLocation();
+  let { recipeId } = useParams();
+  recipeId = parseInt(recipeId);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    if (location.pathname.includes("/edit")) {
+      //from redux store
+      const currentItem = props.recipes.find((r) => r.id === recipeId);
+      console.log(currentItem);
+      setRecipe(currentItem);
+    }
+  };
 
   //this recipe
   const [recipe, setRecipe] = useState({
@@ -46,19 +62,18 @@ const New = (props) => {
   };
 
   //add new category
-  const [showModal, setShowModal] = useState(false);
+  const [showCategory, setShowCategory] = useState(false);
+  const [showAuthor, setShowAuthor] = useState(false);
   const setSelected = (id, selected) => {
     const newRecipe = { ...recipe };
     newRecipe[id] = selected;
     setRecipe(newRecipe);
   };
 
-  const handleModal = () => {
-    // document.body.style.overflow !== "hidden"
-    //   ? (document.body.style.overflow = "hidden")
-    //   : (document.body.style.overflow = "scroll");
-
-    setShowModal(!showModal);
+  const handleModal = (name) => {
+    name === "category"
+      ? setShowCategory(!showCategory)
+      : setShowAuthor(!showAuthor);
   };
 
   //Next button
@@ -74,7 +89,9 @@ const New = (props) => {
   return (
     <Wrapper>
       <Header>
-        <h4 className="title">New Recipe</h4>
+        <h4 className="title">
+          {location.pathname.includes("/add") ? "New Recipe" : "Edit"}
+        </h4>
       </Header>
       <Item>
         <Input
@@ -86,35 +103,37 @@ const New = (props) => {
       </Item>
       <Item>
         <p className="label">Category</p>
-        <button onClick={handleModal}>
+        <button onClick={() => handleModal("category")}>
           {recipe.category && recipe.category !== undefined
             ? recipe.category
             : "Select"}
         </button>
-        <ResSelect
-          showModal={showModal}
-          setShowModal={setShowModal}
-          id="category"
-          name="Category"
-          data={categoryOptions}
-          setSelected={(id, selected) => setSelected(id, selected)}
-        />
+        {showCategory && (
+          <ResSelect
+            setShowModal={setShowCategory}
+            id="category"
+            name="Category"
+            data={categoryOptions}
+            setSelected={(id, selected) => setSelected(id, selected)}
+          />
+        )}
       </Item>
       <Item>
         <p className="label">Author</p>
-        <button onClick={handleModal}>
-          {recipe.category && recipe.category !== undefined
+        <button onClick={() => handleModal("author")}>
+          {recipe.author && recipe.author !== undefined
             ? recipe.author
             : "Select"}
         </button>
-        <ResSelect
-          showModal={showModal}
-          setShowModal={setShowModal}
-          id="author"
-          name="Author"
-          data={authorOptions}
-          setSelected={(e, id) => setSelected(e, id)}
-        />
+        {showAuthor && (
+          <ResSelect
+            setShowModal={setShowAuthor}
+            id="author"
+            name="Author"
+            data={authorOptions}
+            setSelected={(e, id) => setSelected(e, id)}
+          />
+        )}
       </Item>
       <Item>
         <Input
@@ -133,7 +152,11 @@ const New = (props) => {
         />
       </Item>
       <Buttons>
-        <Button label="Next" variant="primary" handleClick={handleNext} />
+        {location.pathname.includes("/add") ? (
+          <Button label="Next" variant="primary" handleClick={handleNext} />
+        ) : (
+          <Button label="Edit" variant="primary" handleClick={handleNext} />
+        )}
       </Buttons>
     </Wrapper>
   );
