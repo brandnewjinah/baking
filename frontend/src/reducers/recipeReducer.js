@@ -2,6 +2,7 @@
 const ADD_RECIPE = "ADD_RECIPE";
 const ADD_INGREDIENTS = "ADD_INGREDIENTS";
 const ADD_DIRECTIONS = "ADD_DIRECTIONS";
+const EDIT_RECIPE = "EDIT_RECIPE";
 
 // Action creators
 export const addRecipe = (item) => {
@@ -34,6 +35,17 @@ export const addDirections = (item, id) => {
       payload: {
         item,
         id,
+      },
+    });
+  };
+};
+
+export const editRecipe = (item) => {
+  return (dispatch) => {
+    dispatch({
+      type: EDIT_RECIPE,
+      payload: {
+        item,
       },
     });
   };
@@ -77,6 +89,16 @@ const reducer = (state = initialState, action) => {
     let thisRecipe = newRecipes[index];
     thisRecipe = { ...thisRecipe, directions };
 
+    newRecipes[index] = thisRecipe;
+    return { ...state, recipes: newRecipes };
+  }
+
+  if (action.type === EDIT_RECIPE) {
+    let updatedRecipe = action.payload.item;
+    let newRecipes = [...state.recipes];
+    const index = newRecipes.findIndex((item) => item.id === updatedRecipe.id);
+    let thisRecipe = newRecipes[index];
+    thisRecipe = { ...thisRecipe, ...updatedRecipe };
     newRecipes[index] = thisRecipe;
     return { ...state, recipes: newRecipes };
   }

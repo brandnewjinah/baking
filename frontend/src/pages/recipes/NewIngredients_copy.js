@@ -1,43 +1,101 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import styled, { css } from "styled-components";
+import Select from "react-select";
 
 //import componts
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Buttons";
-import NewIngSearch from "./NewIngSearch";
+import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, neutral } from "../../components/token";
+import {
+  spacing,
+  neutral,
+  tertiaryFont,
+  typeScale,
+  primaryColor,
+} from "../../components/token";
+
+//local data
+import { groupedOptions } from "../../data/ingredientData";
+import { metricMeasure } from "../../data/measureData";
+//local data
+import { categoryOptions, authorOptions } from "../../data/recipeData";
 
 //redux
 import { connect } from "react-redux";
 import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
+  const history = useHistory();
+  let location = useLocation();
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
 
   const [ingredients, setIngredients] = useState([
-    { id: 1, ingredient: "", amount: "", unit: "" },
-    { id: 2, ingredient: "", amount: "", unit: "" },
+    { id: 1, ingredient: "", amount: "", unit: "g" },
   ]);
 
-  const [currentIndex, setCurrentIndex] = useState(null);
-  const [open, setOpen] = useState(false);
-  const onOpenModal = () => setOpen(!open);
+  const [showIng, setShowIng] = useState(false);
 
-  const setTest = (id) => {
-    setCurrentIndex(id);
-    setOpen(!open);
+  const setSelected = (id, selected) => {
+    const newIngredients = [...ingredients];
+    const index = newIngredients.findIndex((item) => item.id === id);
+    let thisIngredient = newIngredients[index];
+
+    thisIngredient = {
+      ...thisIngredient,
+      ingredient: selected,
+    };
+
+    newIngredients[index] = thisIngredient;
+
+    setIngredients(newIngredients);
   };
 
-  const handleChange = ({ currentTarget: input }) => {
-    let newIng = [...ingredients];
-    const index = newIng.findIndex((item) => item.id === currentIndex);
-    // newIng[index][input.name] = input.value;
-    // setIngredients(newIng);
+  const handleModal = (name) => {
+    setShowIng(!showIng);
+  };
+
+  const formatGroupLabel = (data) => <span>{data.label}</span>;
+
+  const handleSelect = (ing, name) => {
+    const newIngredients = [...ingredients];
+    const index = newIngredients.findIndex((item) => item.id === name.name);
+    let thisIngredient = newIngredients[index];
+    thisIngredient = {
+      ...thisIngredient,
+      ingredient: ing.label,
+    };
+    newIngredients[index] = thisIngredient;
+
+    setIngredients(newIngredients);
+  };
+
+  const handleUnitSelect = (item, name) => {
+    const newIngredients = [...ingredients];
+    const index = newIngredients.findIndex((item) => item.id === name.name);
+    let thisIngredient = newIngredients[index];
+    thisIngredient = {
+      ...thisIngredient,
+      unit: item.value,
+    };
+    newIngredients[index] = thisIngredient;
+
+    setIngredients(newIngredients);
+  };
+
+  const handleInput = ({ currentTarget: input }) => {
+    let newIngredients = [...ingredients];
+    let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
+
+    let currentItem = { ...newIngredients[index] };
+    currentItem[input.name] = input.value;
+    newIngredients[index] = currentItem;
+
+    setIngredients(newIngredients);
   };
 
   const handleAdd = () => {
@@ -45,74 +103,90 @@ const NewIngredients = (props) => {
     let id = NewIngredients[NewIngredients.length - 1].id + 1;
     NewIngredients = [
       ...NewIngredients,
-      { id: id, ingredient: "", amount: "", unit: "" },
+      { id: id, ingredient: "", amount: "", unit: "g" },
     ];
     setIngredients(NewIngredients);
   };
 
   const handleNext = () => {
-    props.addIngredients(ingredients);
+    props.addIngredients(ingredients, recipeId);
 
-    // let newId =
-    //   props.recipes && props.recipes.length > 0 ? props.recipes.length + 1 : 1;
-    // let newRecipe = { ...recipe, id: newId };
-
-    // history.push(`/recipes/${newId}/ingredients`);
+    history.push(`/recipes/${recipeId}/directions`);
   };
 
   return (
-    <Section>
+    <Wrapper>
       <Header>
-        <h2>{thisRecipe.name}</h2>
-        <p>{thisRecipe.category}</p>
+        <p className="overline">{thisRecipe.category}</p>
+        <h4 className="title">{thisRecipe.name}</h4>
       </Header>
-      <Article>
+      <Section>
         <header>Ingredients</header>
         {ingredients.map((item, idx) => (
-          <div key={idx}>
-            <Item>
-              <div className="top" onClick={() => setTest(item.id)}>
-                <MockInput>
-                  <p>{item.ingredient}</p>
-                </MockInput>
+          <Item key={idx}>
+            <div className="full">
+              <button onClick={() => handleModal("category")}>
+                {item.ingredient && item.ingredient !== undefined
+                  ? item.ingredient
+                  : "Select"}
+              </button>
+              {showIng && (
+                <ResSelect
+                  setShowModal={setShowIng}
+                  id={item.id}
+                  name="Ingredient"
+                  data={groupedOptions}
+                  setSelected={(id, selected) => setSelected(id, selected)}
+                />
+              )}
+            </div>
+            <div className="flex">
+              <div className="half">
+                <Input
+                  id={item.id}
+                  placeholder="Amount"
+                  name="amount"
+                  type="number"
+                  value={item.amount}
+                  handleChange={handleInput}
+                />
               </div>
-              <div className="bottom">
-                <div className="left">
-                  {/* <Input placeholder="Amount" value={ingredients[0].amount} /> */}
-                  <Input
-                    placeholder="Amount"
-                    type="decimal"
-                    name="amount"
-                    handleChange={handleChange}
-                  />
-                </div>
-                <div className="right">grams</div>
+              <div className="half">
+                <Select
+                  name={item.id}
+                  defaultValue={{ label: "gram", value: "g", id: 1 }}
+                  options={
+                    metricMeasure &&
+                    metricMeasure.map((item) => ({
+                      label: item.name,
+                      value: item.value,
+                      id: item.id,
+                    }))
+                  }
+                  onChange={(event, name) => handleUnitSelect(event, name)}
+                />
               </div>
-            </Item>
-
-            {open && (
-              <NewIngSearch
-                name="ingredient"
-                handleClick={onOpenModal}
-                handleChange={handleChange}
-              />
-            )}
-          </div>
+            </div>
+          </Item>
         ))}
-      </Article>
+      </Section>
+      <Add>
+        <Button label="Add More" handleClick={handleAdd} />
+      </Add>
       <Buttons>
         <Button label="Next" variant="primary" handleClick={handleNext} />
       </Buttons>
-    </Section>
+    </Wrapper>
   );
 };
 
 const Flex = css`
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
-const Section = styled.section`
+const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   padding: 2rem;
@@ -120,49 +194,57 @@ const Section = styled.section`
 
 const Header = styled.header`
   text-align: center;
-`;
 
-const Article = styled.article`
-  width: 100%;
-  margin: 1.5rem 0;
+  .overline {
+    text-transform: uppercase;
+    font-size: ${typeScale.sbody};
+    font-weight: 500;
+    color: ${primaryColor.gold};
+  }
 
-  header {
-    font-size: 0.875rem;
-    margin: 0.875em 0;
+  .title {
+    font-family: ${tertiaryFont};
+    color: ${neutral[600]};
+    margin: ${spacing.xxxs} 0;
   }
 `;
 
-const Item = styled.div`
+const Section = styled.section``;
+
+const Item = styled.article`
+  width: 100%;
   border-bottom: 1px solid ${neutral[200]};
   padding: ${spacing.l} 0;
 
-  .bottom {
+  .full {
+    flex: 0 0 100%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .half {
+    flex: 0 0 49.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .flex {
     ${Flex}
     justify-content: space-between;
   }
 
-  .left {
-    flex: 0 0 49%;
-  }
-
-  .right {
-    flex: 0 0 49%;
+  button {
+    background-color: transparent;
+    border: 1px solid #d2d2d7;
+    border-radius: ${spacing.xxxs};
+    padding: ${spacing.s};
+    font-size: 0.9rem;
+    width: 100%;
+    cursor: pointer;
   }
 `;
 
-const MockInput = styled.div`
+const Add = styled.div`
   ${Flex}
-  justify-content: start;
-  width: 100%;
-  font-size: 1rem;
-  height: 2.5rem;
-  border: 1px solid ${neutral[200]};
-  border-radius: ${spacing.xxs};
-  padding: ${spacing.xs};
-
-  p {
-    color: ${neutral[400]};
-  }
+  margin: 2rem 0;
 `;
 
 const Buttons = styled.div`

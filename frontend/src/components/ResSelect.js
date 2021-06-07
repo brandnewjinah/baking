@@ -23,11 +23,27 @@ const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
       <Container>
         <Section>
           {data.map((item, idx) => (
+            <Article key={idx}>
+              <p className="header">{item.label}</p>
+              {item.options.map((item, idx) => (
+                <p
+                  className="item"
+                  key={idx}
+                  onClick={() => handleSelect(item.value)}
+                >
+                  {item.label}
+                </p>
+              ))}
+            </Article>
+          ))}
+        </Section>
+        {/* <Section>
+          {data.map((item, idx) => (
             <Item key={idx} onClick={() => handleSelect(item.name)}>
               <p>{item.name}</p>
             </Item>
           ))}
-        </Section>
+        </Section> */}
       </Container>
     </Background>
   );
@@ -80,6 +96,26 @@ const Container = styled.div`
 `;
 
 const Section = styled.section``;
+
+const Article = styled.article`
+  font-size: ${typeScale.sbody};
+  padding: ${spacing.xs} 0;
+
+  .header {
+    text-transform: uppercase;
+    background-color: ${neutral[100]};
+    padding: ${spacing.xxxs} ${spacing.xs};
+  }
+
+  .item {
+    padding: ${spacing.xs};
+    cursor: pointer;
+
+    &:hover {
+      background-color: ${neutral[100]};
+    }
+  }
+`;
 
 const Item = styled.div`
   font-size: ${typeScale.sbody};

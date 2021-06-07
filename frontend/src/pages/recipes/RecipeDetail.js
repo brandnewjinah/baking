@@ -17,6 +17,9 @@ import {
   tertiaryFont,
 } from "../../components/token";
 
+//import assets
+import { Pencil } from "../../assets/Icons";
+
 //redux
 import { connect } from "react-redux";
 import { addDirections } from "../../reducers/recipeReducer";
@@ -71,10 +74,6 @@ const RecipeDetail = (props) => {
     setIngredients(updatedIngredients);
   };
 
-  const calcNew = (amount) => {
-    return amount;
-  };
-
   return (
     <>
       {!thisRecipe ? (
@@ -105,7 +104,19 @@ const RecipeDetail = (props) => {
             <Section>
               <Article>
                 <Flex>
-                  <h5>Ingredients</h5>
+                  <div className="flex">
+                    <h5>Ingredients</h5>
+                    <Link to={`/recipe/edit/${recipeId}/ingredients`}>
+                      <div>
+                        <Pencil
+                          width={16}
+                          height={16}
+                          color="#000"
+                          stroke={2}
+                        />
+                      </div>
+                    </Link>
+                  </div>
                   <div className="txtBtn" onClick={toggleModal}>
                     adjust
                   </div>
@@ -234,7 +245,6 @@ const Article = styled.article`
     font-family: ${tertiaryFont};
     font-weight: 600;
     color: ${neutral[600]};
-    padding-bottom: ${spacing.m};
   }
 
   .txtBtn {
@@ -245,6 +255,11 @@ const Article = styled.article`
   .react-responsive-modal-modal {
     width: 100%;
     height: 100%;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
   }
 `;
 

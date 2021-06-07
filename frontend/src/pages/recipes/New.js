@@ -16,7 +16,7 @@ import { categoryOptions, authorOptions } from "../../data/recipeData";
 
 //redux
 import { connect } from "react-redux";
-import { addRecipe } from "../../reducers/recipeReducer";
+import { addRecipe, editRecipe } from "../../reducers/recipeReducer";
 
 const New = (props) => {
   const history = useHistory();
@@ -84,6 +84,13 @@ const New = (props) => {
     let newRecipe = { ...recipe, id: newId };
     props.addRecipe(newRecipe);
     history.push(`/recipes/${newId}/ingredients`);
+  };
+
+  //Edit Button
+  const handleEdit = () => {
+    props.editRecipe(recipe); //add to redux
+    // alert("Updated");
+    // history.push(`/recipe/${id}`);
   };
 
   return (
@@ -155,7 +162,7 @@ const New = (props) => {
         {location.pathname.includes("/add") ? (
           <Button label="Next" variant="primary" handleClick={handleNext} />
         ) : (
-          <Button label="Edit" variant="primary" handleClick={handleNext} />
+          <Button label="Edit" variant="primary" handleClick={handleEdit} />
         )}
       </Buttons>
     </Wrapper>
@@ -216,4 +223,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addRecipe })(New);
+export default connect(mapStateToProps, { addRecipe, editRecipe })(New);

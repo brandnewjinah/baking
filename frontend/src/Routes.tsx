@@ -30,6 +30,11 @@ const Routes = () => {
           />
           <Route
             exact
+            path="/recipe/edit/:recipeId/ingredients"
+            component={NewIngredients}
+          />
+          <Route
+            exact
             path="/recipes/:recipeId/directions"
             component={NewDirections}
           />
