@@ -1,6 +1,7 @@
 export const primaryFont = '"Inter", sans-serif';
 export const secondaryFont = '"Lora", serif';
-export const tertiaryFont = '"Raleway", sans-serif';
+export const tertiaryFont = '"Nunito Sans", sans-serif';
+
 
 export const typeScale = {
   header1: "3.583rem",

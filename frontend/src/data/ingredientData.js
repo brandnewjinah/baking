@@ -144,6 +144,29 @@ export const flavor = [
   },
 ];
 
+export const chocolate = [
+  {
+    id: 180,
+    label: "Chocolate Chip",
+    value: "Chocolate Chip",
+  },
+  {
+    id: 181,
+    label: "Chocolate",
+    value: "Chocolate",
+  },
+  {
+    id: 182,
+    label: "White Chocolate",
+    value: "White Chocolate",
+  },
+  {
+    id: 183,
+    label: "Cocoa Powder",
+    value: "Cocoa Powder",
+  },
+];
+
 export const groupedOptions = [
   {
     label: "Flour",
@@ -173,5 +196,9 @@ export const groupedOptions = [
   {
     label: "Flavor",
     options: flavor,
+  },
+  {
+    label: "Chocolate",
+    options: chocolate,
   },
 ];

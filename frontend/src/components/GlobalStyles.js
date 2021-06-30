@@ -61,7 +61,7 @@ const GlobalStyle = createGlobalStyle`
         line-height: ${typeScaleMobile.header2};
     }
     h3 {
-        font-weight: 500;
+        font-weight: 600;
         font-size: ${typeScaleMobile.header3};
         line-height: ${typeScaleMobile.header3};
     }

@@ -80,14 +80,6 @@ const RecipeDetail = (props) => {
         <Wrapper>no</Wrapper>
       ) : (
         <Wrapper>
-          <Header>
-            <span className="overline">{thisRecipe.category}</span>
-            <h2 className="title">{thisRecipe.name}</h2>
-            <p className="helper">by {thisRecipe.author}</p>
-            <p className="helper">
-              <Link to={`/recipe/edit/${recipeId}`}>edit</Link>
-            </p>
-          </Header>
           <PlayerContainer>
             <ReactPlayer
               ref={player}
@@ -99,7 +91,22 @@ const RecipeDetail = (props) => {
               height="100%"
             />
           </PlayerContainer>
-          <About>section</About>
+          <Header>
+            <h5 className="title">{thisRecipe.name}</h5>
+            {thisRecipe.description && <p>{thisRecipe.description}</p>}
+            <p className="helper">by {thisRecipe.author}</p>
+            <p className="helper">
+              <Link to={`/recipe/edit/${recipeId}`}>edit</Link>
+            </p>
+          </Header>
+          <Section>
+            <div className="serving">
+              <Element>
+                <div className="header">Serving</div>
+                <div className="content">15 x 15 x 8</div>
+              </Element>
+            </div>
+          </Section>
           <Container>
             <Section>
               <Article>
@@ -183,26 +190,8 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 0 ${spacing.xxl};
-`;
-
 const Header = styled.header`
-  text-align: center;
-  padding-bottom: ${spacing.xl};
-
-  .overline {
-    text-transform: uppercase;
-    font-size: ${typeScale.helper};
-    font-weight: 500;
-    letter-spacing: 0.0125rem;
-    color: ${primaryColor.gold};
-    border-bottom: 1px solid ${primaryColor.gold};
-    display: inline-block;
-    line-height: 2;
-  }
+  padding: ${spacing.xl};
 
   .title {
     font-family: ${tertiaryFont};
@@ -217,6 +206,28 @@ const Header = styled.header`
   }
 `;
 
+const Section = styled.section`
+  width: 100%;
+  padding: ${spacing.xl} 0;
+
+  .overline {
+    text-transform: uppercase;
+    font-size: ${typeScale.helper};
+    font-weight: 500;
+    letter-spacing: 0.0125rem;
+    color: ${primaryColor.gold};
+    border-bottom: 1px solid ${primaryColor.gold};
+    display: inline-block;
+    line-height: 2;
+  }
+`;
+
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 0 ${spacing.xxl};
+`;
+
 const PlayerContainer = styled.section`
   position: relative;
   padding-top: 56.25%;
@@ -228,14 +239,18 @@ const PlayerContainer = styled.section`
   }
 `;
 
-const About = styled.section`
-  width: 100;
-  background-color: ${neutral[100]};
-  padding: ${spacing.xl} 0;
-`;
+const Element = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-const Section = styled.section`
-  padding: ${spacing.xl} 0;
+  .header {
+    color: ${neutral[300]};
+    padding-bottom: ${spacing.xxxs};
+  }
+
+  .content {
+  }
 `;
 
 const Article = styled.article`

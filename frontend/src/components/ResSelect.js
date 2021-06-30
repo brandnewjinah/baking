@@ -22,28 +22,35 @@ const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
       </Header>
       <Container>
         <Section>
-          {data.map((item, idx) => (
-            <Article key={idx}>
-              <p className="header">{item.label}</p>
-              {item.options.map((item, idx) => (
-                <p
-                  className="item"
-                  key={idx}
-                  onClick={() => handleSelect(item.value)}
-                >
-                  {item.label}
-                </p>
-              ))}
-            </Article>
-          ))}
+          {data &&
+            data.map((item, idx) =>
+              item.label ? (
+                <Article key={idx}>
+                  <p className="header">{item.label}</p>
+                  {item.options &&
+                    item.options.map((item, idx) => (
+                      <p
+                        className="item"
+                        key={idx}
+                        onClick={() => handleSelect(item.value)}
+                      >
+                        {item.label}
+                      </p>
+                    ))}
+                </Article>
+              ) : (
+                <Article key={idx}>
+                  <p
+                    className="item"
+                    key={idx}
+                    onClick={() => handleSelect(item.value)}
+                  >
+                    {item.name}
+                  </p>
+                </Article>
+              )
+            )}
         </Section>
-        {/* <Section>
-          {data.map((item, idx) => (
-            <Item key={idx} onClick={() => handleSelect(item.name)}>
-              <p>{item.name}</p>
-            </Item>
-          ))}
-        </Section> */}
       </Container>
     </Background>
   );
@@ -108,7 +115,7 @@ const Article = styled.article`
   }
 
   .item {
-    padding: ${spacing.xs};
+    padding: ${spacing.xs} ${spacing.xxl};
     cursor: pointer;
 
     &:hover {

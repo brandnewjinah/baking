@@ -13,9 +13,9 @@ const SideMenu = ({ isOpen, toggle }) => {
       <MenuContainer>
         <Menu>
           {homeMenu.map((item, index) => (
-            <li key={index}>
-              <MenuLink to={item.link}>{item.title}</MenuLink>
-            </li>
+            <MenuLink to={item.link} key={index}>
+              <li>{item.title}</li>
+            </MenuLink>
           ))}
         </Menu>
       </MenuContainer>

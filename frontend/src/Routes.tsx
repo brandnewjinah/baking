@@ -7,7 +7,7 @@ import Layout from "./components/Layout";
 //import pages
 import Home from "./pages/Home";
 import New from "./pages/recipes/New";
-import NewIngredients from "./pages/recipes/NewIngredients";
+import NewIngredients from "./pages/recipes/NewIngredients_Copy";
 import NewDirections from "./pages/recipes/NewDirections";
 import Recipes from "./pages/recipes/Recipes";
 import RecipeDetail from "./pages/recipes/RecipeDetail";

@@ -41,6 +41,7 @@ const New = (props) => {
   const [recipe, setRecipe] = useState({
     id: 0,
     name: "",
+    description: "",
     category: "",
     author: "",
     url: "",
@@ -104,12 +105,21 @@ const New = (props) => {
         <Input
           label="Name"
           name="name"
+          required
           value={recipe.name}
           handleChange={handleChange}
         />
       </Item>
       <Item>
-        <p className="label">Category</p>
+        <Input
+          label="Short Description"
+          name="description"
+          value={recipe.description}
+          handleChange={handleChange}
+        />
+      </Item>
+      <Item>
+        <p className="label">Category *</p>
         <button onClick={() => handleModal("category")}>
           {recipe.category && recipe.category !== undefined
             ? recipe.category
@@ -144,7 +154,7 @@ const New = (props) => {
       </Item>
       <Item>
         <Input
-          label="URL"
+          label="Video URL"
           name="url"
           value={recipe.url}
           handleChange={handleChange}
@@ -215,6 +225,10 @@ const Flex = css`
 const Buttons = styled.div`
   ${Flex}
   margin: 4rem 0;
+
+  button {
+    width: 100%;
+  }
 `;
 
 const mapStateToProps = (state) => {
