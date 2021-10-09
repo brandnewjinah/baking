@@ -7,8 +7,8 @@ import { neutral, spacing, typeScale } from "./token";
 import { Close } from "../assets/Icons";
 
 const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
-  const handleSelect = (selected) => {
-    setSelected(id, selected);
+  const handleSelect = (item) => {
+    setSelected(id, item);
     setShowModal((prev) => !prev);
   };
 
@@ -20,6 +20,7 @@ const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
           <Close width={20} height={20} color="#000" stroke={2} />
         </div>
       </Header>
+
       <Container>
         <Section>
           {data &&
@@ -31,8 +32,8 @@ const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
                     item.options.map((item, idx) => (
                       <p
                         className="item"
-                        key={idx}
-                        onClick={() => handleSelect(item.value)}
+                        key={item.id}
+                        onClick={() => handleSelect(item)}
                       >
                         {item.label}
                       </p>
@@ -42,8 +43,8 @@ const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
                 <Article key={idx}>
                   <p
                     className="item"
-                    key={idx}
-                    onClick={() => handleSelect(item.value)}
+                    key={item.id}
+                    onClick={() => handleSelect(item)}
                   >
                     {item.name}
                   </p>

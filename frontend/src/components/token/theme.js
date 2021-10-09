@@ -1,9 +1,10 @@
-import { neutral, blue, peach } from "./colors";
+import { neutral, blue, peach, primaryColor } from "./colors";
 import { primaryFont, secondaryFont, tertiaryFont } from "./typography";
 
 export const defaultTheme = {
+  heading: primaryFont,
   primaryColor: blue[400],
-  secondaryColor: peach[400],
+  secondaryColor: primaryColor.yellow,
   neutralHover: neutral[200],
   disalbed: neutral[300],
 };

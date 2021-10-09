@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
-import Select from "react-select";
 import styled, { css } from "styled-components";
 
-//import componts
+//import layout components
+import Wrapper from "../../components/layout/Wrapper";
+import Heading from "../../components/layout/Heading";
+
+//import components
 import { Input } from "../../components/Input";
-import { Button } from "../../components/Buttons";
-import { Close } from "../../assets/Icons";
+import {
+  FilledButton,
+  OutlinedButton,
+  TextButton,
+} from "../../components/Button";
+import Select from "react-select";
+import ResSelect from "../../components/ResSelect";
 
 //import token
-import {
-  spacing,
-  neutral,
-  tertiaryFont,
-  typeScale,
-  primaryColor,
-} from "../../components/token";
+import { spacing, neutral, defaultTheme } from "../../components/token";
+import { Plus } from "../../assets/Icons";
 
 //local data
 import { groupedOptions } from "../../data/ingredientData";
@@ -27,53 +30,64 @@ import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
   const history = useHistory();
-  let location = useLocation();
+
+  //this recipe
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
 
+  //handle serving
+  const [serving, setServing] = useState("");
+
+  const handleServingInput = ({ currentTarget: input }) => {
+    setServing(input.value);
+  };
+
+  //select ingredient
   const [ingredients, setIngredients] = useState([
     { id: 1, ingredient: "", amount: "", unit: "g" },
   ]);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const [showIng, setShowIng] = useState(false);
 
-  const getData = () => {
-    if (location.pathname.includes("/edit/")) {
-      //from redux store
-      const currentItem = props.recipes.find((r) => r.id === recipeId);
-      console.log(currentItem);
-      setIngredients(currentItem.ingredients);
-    }
+  const [currIng, setCurrIng] = useState();
+
+  const handleModal = (id) => {
+    setShowIng(!showIng);
+    setCurrIng(id);
   };
 
-  const formatGroupLabel = (data) => <span>{data.label}</span>;
-
-  const handleSelect = (name) => (value) => {
+  const setSelected = (id, selected) => {
     const newIngredients = [...ingredients];
-    const index = newIngredients.findIndex((item) => item.id === name);
+    let index = newIngredients.findIndex((item) => item.id === id);
     let thisIngredient = newIngredients[index];
     thisIngredient = {
       ...thisIngredient,
-      ingredient: value.value,
+      id: id,
+      ingredient: selected,
     };
     newIngredients[index] = thisIngredient;
+    setIngredients(newIngredients);
+  };
+
+  //add amount
+  const handleInput = ({ currentTarget: input }) => {
+    let newIngredients = [...ingredients];
+    let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
+
+    let currentItem = { ...newIngredients[index] };
+    currentItem[input.name] = input.value;
+    newIngredients[index] = currentItem;
 
     setIngredients(newIngredients);
   };
 
-  const handleValue = (id) => {
-    const newIngredients = [...ingredients];
-    const index = newIngredients.findIndex((item) => item.id === id);
-    let thisIngredient = newIngredients[index];
-    let example = {
-      id: id,
-      label: thisIngredient.ingredient,
-      value: thisIngredient.ingredient,
-    };
-    return example;
+  const selectStyles = {
+    control: (styles) => ({
+      ...styles,
+      padding: ".3em 0",
+      borderRadius: ".35em",
+    }),
   };
 
   const handleUnitSelect = (item, name) => {
@@ -89,17 +103,7 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
-  const handleInput = ({ currentTarget: input }) => {
-    let newIngredients = [...ingredients];
-    let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
-
-    let currentItem = { ...newIngredients[index] };
-    currentItem[input.name] = input.value;
-    newIngredients[index] = currentItem;
-
-    setIngredients(newIngredients);
-  };
-
+  //add ingredient
   const handleAdd = () => {
     let NewIngredients = [...ingredients];
     let id = NewIngredients[NewIngredients.length - 1].id + 1;
@@ -110,42 +114,69 @@ const NewIngredients = (props) => {
     setIngredients(NewIngredients);
   };
 
-  const handleDelete = (id) => {
+  //delete ingredient
+  const handleIngDelete = (id) => {
     let NewIngredients = [...ingredients];
     NewIngredients = NewIngredients.filter((i) => i.id !== id);
     setIngredients(NewIngredients);
   };
 
+  //Next buttom
   const handleNext = () => {
-    props.addIngredients(ingredients, recipeId);
-
+    props.addIngredients(ingredients, serving, recipeId);
     history.push(`/recipes/${recipeId}/directions`);
   };
 
-  console.log(groupedOptions);
-
   return (
     <Wrapper>
-      <Header>
-        <p className="overline">{thisRecipe.category}</p>
-        <h4 className="title">{thisRecipe.name}</h4>
-      </Header>
+      <Heading
+        kicker={thisRecipe.category.value}
+        title={thisRecipe.name}
+      ></Heading>
       <Section>
-        <header>Ingredients</header>
+        <header className="p3 upper">Serving Size</header>
+        <Article>
+          <div className="full ">
+            <Input
+              placeholder="e.g. 15cm Round Cake Pan"
+              name="serving"
+              type="text"
+              value={serving.serving}
+              handleChange={handleServingInput}
+            />
+          </div>
+        </Article>
+      </Section>
+      <Section>
+        <header className="p3 upper">Ingredients</header>
         {ingredients.map((item, idx) => (
-          <Item key={idx}>
-            <div className="full">
-              <Select
-                name={item.id}
-                // value={props.options.filter(option => option.label === 'Some label')}
-                value={handleValue(item.id)}
-                options={groupedOptions}
-                formatGroupLabel={formatGroupLabel}
-                onChange={handleSelect(item.id)}
+          <Article key={idx}>
+            <OutlinedButton
+              label={
+                item.ingredient.value && item.ingredient.value !== undefined
+                  ? item.ingredient.value
+                  : "Select"
+              }
+              shape="rounded"
+              fullwidth
+              thin
+              color={neutral[200]}
+              textColor={neutral[600]}
+              handleClick={() => handleModal(item.id)}
+            />
+
+            {showIng && (
+              <ResSelect
+                setShowModal={setShowIng}
+                id={currIng}
+                name="Ingredient"
+                data={groupedOptions}
+                setSelected={(id, selected) => setSelected(id, selected)}
               />
-            </div>
+            )}
+
             <div className="flex">
-              <div className="half">
+              <div className="half ">
                 <Input
                   id={item.id}
                   placeholder="Amount"
@@ -155,6 +186,7 @@ const NewIngredients = (props) => {
                   handleChange={handleInput}
                 />
               </div>
+
               <div className="half">
                 <Select
                   name={item.id}
@@ -167,28 +199,36 @@ const NewIngredients = (props) => {
                       id: item.id,
                     }))
                   }
+                  styles={selectStyles}
                   onChange={(event, name) => handleUnitSelect(event, name)}
                 />
               </div>
-              {idx === 0 ? (
-                <div></div>
-              ) : (
-                <div
-                  className="iconContainer"
-                  onClick={() => handleDelete(item.id)}
-                >
-                  <Close width={20} height={20} color="#000" stroke={2} />
-                </div>
-              )}
             </div>
-          </Item>
+            {idx === 0 ? (
+              <div></div>
+            ) : (
+              <div
+                className="p2 center vspace"
+                onClick={() => handleIngDelete(item.id)}
+              >
+                delete
+              </div>
+            )}
+          </Article>
         ))}
       </Section>
       <Add>
-        <Button label="Add More" handleClick={handleAdd} />
+        <Plus width={20} height={20} color="#000" stroke={2} />
+        <TextButton label="Add More" handleClick={handleAdd} />
       </Add>
       <Buttons>
-        <Button label="Next" variant="primary" handleClick={handleNext} />
+        <FilledButton
+          label="Next"
+          color={defaultTheme.secondaryColor}
+          shape="rounded"
+          fullwidth
+          handleClick={handleNext}
+        />
       </Buttons>
     </Wrapper>
   );
@@ -200,39 +240,18 @@ const Flex = css`
   justify-content: center;
 `;
 
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 2rem;
+const Section = styled.section`
+  padding: ${spacing.s} 0;
 `;
 
-const Header = styled.header`
-  text-align: center;
-
-  .overline {
-    text-transform: uppercase;
-    font-size: ${typeScale.sbody};
-    font-weight: 500;
-    color: ${primaryColor.gold};
-  }
-
-  .title {
-    font-family: ${tertiaryFont};
-    color: ${neutral[600]};
-    margin: ${spacing.xxxs} 0;
-  }
-`;
-
-const Section = styled.section``;
-
-const Item = styled.article`
+const Article = styled.article`
   width: 100%;
   border-bottom: 1px solid ${neutral[200]};
-  padding: ${spacing.l} 0;
+  padding: ${spacing.m} 0;
 
   .full {
     flex: 0 0 100%;
-    padding: ${spacing.xxs} 0;
+    /* padding: ${spacing.xxs} 0; */
   }
 
   .half {
@@ -245,20 +264,14 @@ const Item = styled.article`
     justify-content: space-between;
   }
 
-  .iconContainer {
-    ${Flex}
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    background-color: ${neutral[100]};
-    padding: 0.25em;
-    cursor: pointer;
+  button {
+    width: 100%;
   }
 `;
 
 const Add = styled.div`
   ${Flex}
-  margin: 2rem 0;
+  padding: ${spacing.m} 0;
 `;
 
 const Buttons = styled.div`

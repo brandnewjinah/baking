@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import styled, { css } from "styled-components";
-import Select from "react-select";
 
-//import componts
+//import layout components
+import Wrapper from "../../components/layout/Wrapper";
+import Heading from "../../components/layout/Heading";
+
+//import components
 import { Input } from "../../components/Input";
-import { Button } from "../../components/Buttons";
+import {
+  FilledButton,
+  OutlinedButton,
+  TextButton,
+} from "../../components/Button";
+import Select from "react-select";
 import ResSelect from "../../components/ResSelect";
 
 //import token
 import {
   spacing,
   neutral,
-  tertiaryFont,
+  defaultTheme,
   typeScale,
-  primaryColor,
 } from "../../components/token";
+import { Plus } from "../../assets/Icons";
 
 //local data
 import { groupedOptions } from "../../data/ingredientData";
 import { metricMeasure } from "../../data/measureData";
-//local data
-import { categoryOptions, authorOptions } from "../../data/recipeData";
 
 //redux
 import { connect } from "react-redux";
@@ -29,30 +35,34 @@ import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
   const history = useHistory();
-  let location = useLocation();
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
+
+  const [serving, setServing] = useState({
+    serving: "",
+  });
 
   const [ingredients, setIngredients] = useState([
     { id: 1, ingredient: "", amount: "", unit: "g" },
   ]);
 
+  const [errors, setErrors] = useState({});
+
   const [showIng, setShowIng] = useState(false);
 
   const setSelected = (id, selected) => {
-    const newIngredients = [...ingredients];
-    const index = newIngredients.findIndex((item) => item.id === id);
-    let thisIngredient = newIngredients[index];
-
-    thisIngredient = {
-      ...thisIngredient,
-      ingredient: selected,
-    };
-
-    newIngredients[index] = thisIngredient;
-
-    setIngredients(newIngredients);
+    // console.log(id, selected);
+    // const newIngredients = [...ingredients];
+    // let index = newIngredients.findIndex((item) => item.id === id);
+    // let thisIngredient = newIngredients[index];
+    // thisIngredient = {
+    //   ...thisIngredient,
+    //   id: id,
+    //   ingredient: selected,
+    // };
+    // newIngredients[index] = thisIngredient;
+    // setIngredients(newIngredients);
   };
 
   const handleModal = (name) => {
@@ -60,6 +70,14 @@ const NewIngredients = (props) => {
   };
 
   const formatGroupLabel = (data) => <span>{data.label}</span>;
+
+  const selectStyles = {
+    control: (styles) => ({
+      ...styles,
+      padding: ".3em 0",
+      borderRadius: ".35em",
+    }),
+  };
 
   const handleSelect = (ing, name) => {
     const newIngredients = [...ingredients];
@@ -87,6 +105,12 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
+  const handleServingInput = ({ currentTarget: input }) => {
+    let newServing = { ...serving };
+    newServing[input.name] = input.value;
+    setServing(newServing);
+  };
+
   const handleInput = ({ currentTarget: input }) => {
     let newIngredients = [...ingredients];
     let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
@@ -108,40 +132,66 @@ const NewIngredients = (props) => {
     setIngredients(NewIngredients);
   };
 
+  const handleIngDelete = (id) => {
+    let NewIngredients = [...ingredients];
+    NewIngredients = NewIngredients.filter((i) => i.id !== id);
+    setIngredients(NewIngredients);
+  };
+
   const handleNext = () => {
-    props.addIngredients(ingredients, recipeId);
+    props.addIngredients(ingredients, serving, recipeId);
 
     history.push(`/recipes/${recipeId}/directions`);
   };
 
   return (
     <Wrapper>
-      <Header>
-        <p className="overline">{thisRecipe.category}</p>
-        <h4 className="title">{thisRecipe.name}</h4>
-      </Header>
+      <Heading kicker={thisRecipe.category} title={thisRecipe.name}></Heading>
       <Section>
-        <header>Ingredients</header>
+        <p className="p3 upper">Serving Size</p>
+        <Article>
+          <div className="full ">
+            <Input
+              placeholder="e.g. 15cm Round Cake Pan"
+              name="serving"
+              type="text"
+              value={serving.serving}
+              handleChange={handleServingInput}
+            />
+          </div>
+        </Article>
+      </Section>
+      <Section>
+        <p className="p3 upper">Ingredients</p>
         {ingredients.map((item, idx) => (
-          <Item key={idx}>
-            <div className="full">
-              <button onClick={() => handleModal("category")}>
-                {item.ingredient && item.ingredient !== undefined
+          <Article key={idx}>
+            <OutlinedButton
+              label={
+                item.ingredient && item.ingredient !== undefined
                   ? item.ingredient
-                  : "Select"}
-              </button>
-              {showIng && (
-                <ResSelect
-                  setShowModal={setShowIng}
-                  id={item.id}
-                  name="Ingredient"
-                  data={groupedOptions}
-                  setSelected={(id, selected) => setSelected(id, selected)}
-                />
-              )}
-            </div>
+                  : "Select"
+              }
+              shape="rounded"
+              fullwidth
+              thin
+              color={neutral[200]}
+              textColor={neutral[600]}
+              handleClick={() => handleModal("category")}
+            />
+
+            {showIng && (
+              <ResSelect
+                setShowModal={setShowIng}
+                id={item.id}
+                name="Ingredient"
+                data={groupedOptions}
+                // setSelected={(id, selected) => setSelected(id, selected)}
+                setSelected={() => console.log(item.id)}
+              />
+            )}
+
             <div className="flex">
-              <div className="half">
+              <div className="half ">
                 <Input
                   id={item.id}
                   placeholder="Amount"
@@ -151,6 +201,7 @@ const NewIngredients = (props) => {
                   handleChange={handleInput}
                 />
               </div>
+
               <div className="half">
                 <Select
                   name={item.id}
@@ -163,18 +214,38 @@ const NewIngredients = (props) => {
                       id: item.id,
                     }))
                   }
+                  styles={selectStyles}
                   onChange={(event, name) => handleUnitSelect(event, name)}
                 />
               </div>
             </div>
-          </Item>
+            {idx === 0 ? (
+              <div></div>
+            ) : (
+              <div
+                className="p2 center vspace"
+                onClick={() => handleIngDelete(item.id)}
+              >
+                delete
+              </div>
+            )}
+          </Article>
         ))}
       </Section>
       <Add>
-        <Button label="Add More" handleClick={handleAdd} />
+        <Plus width={20} height={20} color="#000" stroke={2} />
+        {/* <Button label="Add More" variant="tertiary" handleClick={handleAdd} /> */}
+        <TextButton label="Add More" handleClick={handleAdd} />
       </Add>
       <Buttons>
-        <Button label="Next" variant="primary" handleClick={handleNext} />
+        {/* <Button label="Next" variant="primary" handleClick={handleNext} /> */}
+        <FilledButton
+          label="Next"
+          color={defaultTheme.secondaryColor}
+          shape="rounded"
+          fullwidth
+          handleClick={handleNext}
+        />
       </Buttons>
     </Wrapper>
   );
@@ -186,39 +257,36 @@ const Flex = css`
   justify-content: center;
 `;
 
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 2rem;
+// const Wrapper = styled.div`
+
+//   .sbody {
+//     font-size: ${typeScale.sbody};
+//     color: ${neutral[500]};
+//     letter-spacing: 0.025rem;
+//   }
+
+//   .upper {
+//     text-transform: uppercase;
+//   }
+// `;
+
+const Section = styled.section`
+  padding: ${spacing.s} 0;
+
+  .p3 {
+    letter-spacing: 0.03rem;
+    color: ${neutral[400]};
+  }
 `;
 
-const Header = styled.header`
-  text-align: center;
-
-  .overline {
-    text-transform: uppercase;
-    font-size: ${typeScale.sbody};
-    font-weight: 500;
-    color: ${primaryColor.gold};
-  }
-
-  .title {
-    font-family: ${tertiaryFont};
-    color: ${neutral[600]};
-    margin: ${spacing.xxxs} 0;
-  }
-`;
-
-const Section = styled.section``;
-
-const Item = styled.article`
+const Article = styled.article`
   width: 100%;
   border-bottom: 1px solid ${neutral[200]};
-  padding: ${spacing.l} 0;
+  padding: ${spacing.m} 0;
 
   .full {
     flex: 0 0 100%;
-    padding: ${spacing.xxs} 0;
+    /* padding: ${spacing.xxs} 0; */
   }
 
   .half {
@@ -232,19 +300,13 @@ const Item = styled.article`
   }
 
   button {
-    background-color: transparent;
-    border: 1px solid #d2d2d7;
-    border-radius: ${spacing.xxxs};
-    padding: ${spacing.s};
-    font-size: 0.9rem;
     width: 100%;
-    cursor: pointer;
   }
 `;
 
 const Add = styled.div`
   ${Flex}
-  margin: 2rem 0;
+  padding: ${spacing.m} 0;
 `;
 
 const Buttons = styled.div`

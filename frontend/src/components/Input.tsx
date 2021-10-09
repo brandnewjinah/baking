@@ -1,12 +1,12 @@
 import React, { ChangeEvent, FC, useState } from "react";
 
 //import styles and assets
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Eye, EyeOff } from "../assets/Icons";
-import { neutral } from "./token";
+import { neutral, typeScale, spacing } from "./token";
 
 export interface Props {
-  label: string;
+  label?: string;
   name: string;
   value?: string;
   required?: boolean;
@@ -22,6 +22,7 @@ export interface Props {
   disabled?: boolean;
   inputmode?: "url" | "tel" | "email" | "numeric" | undefined;
   maxLength?: number;
+  suffix?: boolean;
   handleInput: (text: string) => void;
   handleChange?: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,16 +51,19 @@ export const Input: FC<Props> = ({
   disabled,
   inputmode,
   maxLength,
+  suffix,
   handleChange,
 }) => {
   const [isPassword, setIsPassword] = useState(true);
 
   return (
     <Wrapper margin={margin} shape={shape}>
-      <label htmlFor={name} aria-hidden="true">
-        {label}
-        {required && " *"}
-      </label>
+      {label && (
+        <label htmlFor={name} aria-hidden="true">
+          {label}
+          {required && " *"}
+        </label>
+      )}
 
       <Container>
         {type === "password" && (
@@ -71,6 +75,7 @@ export const Input: FC<Props> = ({
             )}
           </div>
         )}
+        {suffix && <div className="suffix">{suffix}</div>}
         <InputTag
           placeholder={placeholder}
           shape={shape}
@@ -95,7 +100,7 @@ export const Input: FC<Props> = ({
           onChange={handleChange}
         />
       </Container>
-      {error && <p className="helper">{error}</p>}
+      {error && <small className="errorTxt">{error}</small>}
     </Wrapper>
   );
 };
@@ -139,17 +144,82 @@ export const Floating: FC<Props> = ({
           )}
         </div>
       )}
-      {error && <p className="helper">error message</p>}
+      {error && <p className="errorTxt">error message</p>}
     </FloatingContainer>
   );
 };
+
+export const TextArea: FC<Props> = ({
+  id,
+  label,
+  value,
+  required,
+  name,
+  align,
+  error,
+  small,
+  shape,
+  margin,
+  placeholder,
+  disabled,
+  maxLength,
+  handleChange,
+}) => {
+  return (
+    <Wrapper margin={margin} shape={shape}>
+      {label && (
+        <label htmlFor={name} aria-hidden="true">
+          {label}
+          {required && " *"}
+        </label>
+      )}
+
+      <Container>
+        <TextAreaTag
+          placeholder={placeholder}
+          shape={shape}
+          align={align}
+          id={id ? id : name}
+          className={`${small && "small"} ${error && "error"}`}
+          name={name}
+          value={value}
+          disabled={disabled}
+          maxLength={maxLength}
+          aria-label={name}
+          aria-required={required}
+          aria-invalid={error ? true : false}
+          onChange={handleChange}
+        />
+      </Container>
+      {error && <small className="errorTxt">{error}</small>}
+    </Wrapper>
+  );
+};
+
+const Global = css<StyleProps>`
+  width: 100%;
+  font-size: 1.05rem;
+  border-radius: ${(props) =>
+    props.shape === "underline" ? "none" : "0.35rem"};
+  border-top: ${(props) =>
+    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
+  border-left: ${(props) =>
+    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
+  border-right: ${(props) =>
+    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
+  border-bottom: 1px solid #d2d2d7;
+  padding: ${(props) =>
+    props.align === "right" ? `0 0.75rem 0 0` : `0 0 0 0.75rem`};
+`;
 
 const Wrapper = styled.div<StyleProps>`
   margin: ${(props) => `${props.margin} 0`};
 
   label {
+    display: inline-block;
     font-size: 0.925rem;
     color: ${neutral[400]};
+    margin-bottom: ${spacing.xxxs};
   }
 
   .error {
@@ -169,27 +239,17 @@ const Wrapper = styled.div<StyleProps>`
     height: 2.25rem;
   }
 
-  .helper {
-    font-size: 0.7875rem;
+  .errorTxt {
+    /* font-size: 0.7875rem; */
     color: red;
     margin: 0.25em 0;
   }
 `;
 
 const InputTag = styled.input<StyleProps>`
-  width: 100%;
-  font-size: 1.05rem;
+  ${Global}
   height: 3rem;
-  border-radius: ${(props) =>
-    props.shape === "underline" ? "none" : "0.35rem"};
-  border-top: ${(props) =>
-    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
-  border-left: ${(props) =>
-    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
-  border-right: ${(props) =>
-    props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
-  border-bottom: 1px solid #d2d2d7;
-  padding: 0 0 0 0.75rem;
+  /* padding: 0 0 0 0.75rem; */
   appearance: none;
   text-align: ${(props) => (props.align === "right" ? "right" : "left")};
 
@@ -215,6 +275,15 @@ const Container = styled.div`
     right: 0.75rem;
     display: flex;
     cursor: pointer;
+  }
+
+  .suffix {
+    position: absolute;
+    top: 0.95rem;
+    right: 0.75rem;
+    display: flex;
+    cursor: pointer;
+    font-size: ${typeScale.helper};
   }
 `;
 
@@ -275,4 +344,8 @@ const FloatingContainer = styled.div<StyleProps>`
     color: red;
     margin: 0.25em 0;
   }
+`;
+
+const TextAreaTag = styled.textarea<StyleProps>`
+  ${Global}
 `;

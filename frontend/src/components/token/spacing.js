@@ -1,6 +1,6 @@
 export const spacing = {
   xxxs: ".35em",
-  xxs: ".5em",
+  xxs: ".625em",
   xs: ".75em",
   s: ".875em",
   m: "1em",

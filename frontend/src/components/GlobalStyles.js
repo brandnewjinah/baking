@@ -79,9 +79,18 @@ const GlobalStyle = createGlobalStyle`
         font-weight: 500;
         font-size: ${typeScaleMobile.header6};
         line-height: ${typeScaleMobile.header6};
+        letter-spacing: 0.03rem;
+        text-transform: uppercase;
     } 
-        
+    .p2, .label {
+        font-size: ${typeScaleMobile.sbody}; 
     }
+    .p3 {
+        font-size: ${typeScaleMobile.helper}; 
+    }
+    
+
+}
 `;
 
 export default GlobalStyle;

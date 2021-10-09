@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import ReactPlayer from "react-player";
 import "./styles.css";
 import { Modal } from "react-responsive-modal";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 //import components
 import { Input } from "../../components/Input";
+import { TextButton } from "../../components/Button";
 
 //import token
 import {
@@ -22,9 +23,10 @@ import { Pencil } from "../../assets/Icons";
 
 //redux
 import { connect } from "react-redux";
-import { addDirections } from "../../reducers/recipeReducer";
+import { addDirections, deleteRecipe } from "../../reducers/recipeReducer";
 
 const RecipeDetail = (props) => {
+  let history = useHistory();
   //this recipe
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
@@ -74,6 +76,12 @@ const RecipeDetail = (props) => {
     setIngredients(updatedIngredients);
   };
 
+  //delete recipe
+  const handleDelete = () => {
+    props.deleteRecipe(recipeId); //add to redux
+    history.push("/recipes");
+  };
+
   return (
     <>
       {!thisRecipe ? (
@@ -92,18 +100,29 @@ const RecipeDetail = (props) => {
             />
           </PlayerContainer>
           <Header>
-            <h5 className="title">{thisRecipe.name}</h5>
-            {thisRecipe.description && <p>{thisRecipe.description}</p>}
+            <p className="helper category">{thisRecipe.category}</p>
+            <h1 className="title">{thisRecipe.name}</h1>
+            {thisRecipe.description && (
+              <p className="sbody">{thisRecipe.description}</p>
+            )}
             <p className="helper">by {thisRecipe.author}</p>
-            <p className="helper">
+            {/* <p className="helper">
               <Link to={`/recipe/edit/${recipeId}`}>edit</Link>
-            </p>
+            </p> */}
           </Header>
           <Section>
             <div className="serving">
               <Element>
-                <div className="header">Serving</div>
-                <div className="content">15 x 15 x 8</div>
+                <div className="helper vspace">Temp</div>
+                <div className="sbody">350°F</div>
+              </Element>
+              <Element>
+                <div className="helper vspace">Makes</div>
+                <div className="sbody">15 x 15 x 8</div>
+              </Element>
+              <Element>
+                <div className="helper vspace">Makes</div>
+                <div className="sbody">15 x 15 x 8</div>
               </Element>
             </div>
           </Section>
@@ -171,7 +190,14 @@ const RecipeDetail = (props) => {
               </Article>
             </Section>
             <Section>
-              <Link to={`/recipes/edit/${recipeId}`}>edit</Link>
+              <Link to={`/recipes/edit/${recipeId}/directions`}>edit</Link>
+            </Section>
+            <Section>
+              <TextButton
+                label="Delete"
+                color="#d35400"
+                handleClick={handleDelete}
+              />
             </Section>
           </Container>
         </Wrapper>
@@ -188,21 +214,38 @@ const Flex = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-`;
-
-const Header = styled.header`
-  padding: ${spacing.xl};
-
-  .title {
-    font-family: ${tertiaryFont};
-    color: ${neutral[600]};
-    margin: ${spacing.xxxs} 0;
-  }
 
   .helper {
     font-size: ${typeScale.helper};
-    font-weight: 400;
+    font-weight: 500;
+    letter-spacing: 0.03rem;
     color: ${neutral[400]};
+  }
+
+  .sbody {
+    font-size: ${typeScale.sbody};
+    color: ${neutral[500]};
+    letter-spacing: 0.025rem;
+    margin-bottom: ${spacing.xxs};
+  }
+
+  .vspace {
+    margin-bottom: ${spacing.xxxs};
+  }
+`;
+
+const Header = styled.header`
+  text-align: center;
+  padding: ${spacing.xl};
+
+  .category {
+    text-transform: uppercase;
+  }
+
+  .title {
+    font-family: ${tertiaryFont};
+    color: ${neutral[700]};
+    margin: ${spacing.xxs} 0;
   }
 `;
 
@@ -219,6 +262,12 @@ const Section = styled.section`
     border-bottom: 1px solid ${primaryColor.gold};
     display: inline-block;
     line-height: 2;
+  }
+
+  .serving {
+    display: flex;
+    justify-content: center;
+    background-color: ${neutral[10]};
   }
 `;
 
@@ -242,15 +291,7 @@ const PlayerContainer = styled.section`
 const Element = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-
-  .header {
-    color: ${neutral[300]};
-    padding-bottom: ${spacing.xxxs};
-  }
-
-  .content {
-  }
+  padding: 1em;
 `;
 
 const Article = styled.article`
@@ -300,4 +341,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addDirections })(RecipeDetail);
+export default connect(mapStateToProps, { addDirections, deleteRecipe })(
+  RecipeDetail
+);

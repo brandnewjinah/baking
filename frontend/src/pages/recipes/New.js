@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
-import Select from "react-select";
 
-//import componts
+//import layout components
+import Wrapper from "../../components/layout/Wrapper";
+import Heading from "../../components/layout/Heading";
+
+//import components
 import { Input } from "../../components/Input";
-import { Button } from "../../components/Buttons";
+import { FilledButton, OutlinedButton } from "../../components/Button";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, neutral, tertiaryFont } from "../../components/token";
+import { spacing, defaultTheme, neutral } from "../../components/token";
 
 //local data
 import { categoryOptions, authorOptions } from "../../data/recipeData";
@@ -24,42 +27,28 @@ const New = (props) => {
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = () => {
-    if (location.pathname.includes("/edit")) {
-      //from redux store
-      const currentItem = props.recipes.find((r) => r.id === recipeId);
-      console.log(currentItem);
-      setRecipe(currentItem);
-    }
-  };
-
   //this recipe
   const [recipe, setRecipe] = useState({
     id: 0,
     name: "",
     description: "",
-    category: "",
-    author: "",
-    url: "",
-    photo: "",
+    category: {},
+    author: {},
+    youtube: "",
   });
 
-  //Add name, url
+  //add name, description, youtube
   const handleChange = ({ currentTarget: input }) => {
-    const userInput = { ...recipe };
-    userInput[input.name] = input.value;
-    setRecipe(userInput);
+    const recipeClone = { ...recipe };
+    recipeClone[input.name] = input.value;
+    setRecipe(recipeClone);
   };
 
-  //Add category and author
-  const handleCategorySelect = (item, name) => {
-    const userInput = { ...recipe };
-    userInput[name.name] = item.value;
-    setRecipe(userInput);
+  //open category and author modal
+  const handleModal = (name) => {
+    name === "category"
+      ? setShowCategory(!showCategory)
+      : setShowAuthor(!showAuthor);
   };
 
   //add new category
@@ -71,14 +60,26 @@ const New = (props) => {
     setRecipe(newRecipe);
   };
 
-  const handleModal = (name) => {
-    name === "category"
-      ? setShowCategory(!showCategory)
-      : setShowAuthor(!showAuthor);
+  //validate errors
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const errors = {};
+    if (recipe.name === "") {
+      errors.name = "Name is required";
+    }
+    if (recipe.category === "") {
+      errors.category = "Category is required";
+    }
+    return Object.keys(errors).length === 0 ? null : errors;
   };
 
-  //Next button
+  //Next Button
   const handleNext = () => {
+    const errors = validate();
+    setErrors(errors || {});
+    if (errors) return;
+
     let newId =
       props.recipes && props.recipes.length > 0 ? props.recipes.length + 1 : 1;
 
@@ -94,141 +95,125 @@ const New = (props) => {
     // history.push(`/recipe/${id}`);
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    if (location.pathname.includes("/edit")) {
+      //get recipe info from redux store
+      const currentItem = props.recipes.find((r) => r.id === recipeId);
+      setRecipe(currentItem);
+    }
+  };
+
   return (
     <Wrapper>
-      <Header>
-        <h4 className="title">
-          {location.pathname.includes("/add") ? "New Recipe" : "Edit"}
-        </h4>
-      </Header>
-      <Item>
-        <Input
-          label="Name"
-          name="name"
-          required
-          value={recipe.name}
-          handleChange={handleChange}
-        />
-      </Item>
-      <Item>
-        <Input
-          label="Short Description"
-          name="description"
-          value={recipe.description}
-          handleChange={handleChange}
-        />
-      </Item>
-      <Item>
-        <p className="label">Category *</p>
-        <button onClick={() => handleModal("category")}>
-          {recipe.category && recipe.category !== undefined
-            ? recipe.category
-            : "Select"}
-        </button>
-        {showCategory && (
-          <ResSelect
-            setShowModal={setShowCategory}
-            id="category"
-            name="Category"
-            data={categoryOptions}
-            setSelected={(id, selected) => setSelected(id, selected)}
+      <Heading
+        title={location.pathname.includes("/add") ? "Add a New Recipe" : "Edit"}
+      />
+      <p className="p3 center">* required</p>
+      <Section>
+        <Article>
+          <Input
+            label="Recipe Name"
+            name="name"
+            required
+            value={recipe.name}
+            error={errors.name}
+            handleChange={handleChange}
           />
-        )}
-      </Item>
-      <Item>
-        <p className="label">Author</p>
-        <button onClick={() => handleModal("author")}>
-          {recipe.author && recipe.author !== undefined
-            ? recipe.author
-            : "Select"}
-        </button>
-        {showAuthor && (
-          <ResSelect
-            setShowModal={setShowAuthor}
-            id="author"
-            name="Author"
-            data={authorOptions}
-            setSelected={(e, id) => setSelected(e, id)}
+        </Article>
+        <Article>
+          <Input
+            label="Short Description"
+            name="description"
+            value={recipe.description}
+            handleChange={handleChange}
           />
-        )}
-      </Item>
-      <Item>
-        <Input
-          label="Video URL"
-          name="url"
-          value={recipe.url}
-          handleChange={handleChange}
+        </Article>
+        <Article>
+          <p className="label">Category *</p>
+          <OutlinedButton
+            error={errors.category}
+            label={
+              recipe.category.value && recipe.category.value !== undefined
+                ? recipe.category.value
+                : "Select"
+            }
+            shape="rounded"
+            fullwidth
+            thin
+            color={neutral[200]}
+            textColor={neutral[600]}
+            handleClick={() => handleModal("category")}
+          />
+          {errors.category && (
+            <small className="errorTxt">{errors.category}</small>
+          )}
+          {showCategory && (
+            <ResSelect
+              setShowModal={setShowCategory}
+              id="category"
+              name="Category"
+              data={categoryOptions}
+              setSelected={(id, selected) => setSelected(id, selected)}
+            />
+          )}
+        </Article>
+        <Article>
+          <p className="label">Author</p>
+          <OutlinedButton
+            label={
+              recipe.author.value && recipe.author.value !== undefined
+                ? recipe.author.value
+                : "Select"
+            }
+            shape="rounded"
+            fullwidth
+            thin
+            color={neutral[200]}
+            textColor={neutral[600]}
+            handleClick={() => handleModal("author")}
+          />
+          {showAuthor && (
+            <ResSelect
+              setShowModal={setShowAuthor}
+              id="author"
+              name="Author"
+              data={authorOptions}
+              setSelected={(name, selected) => setSelected(name, selected)}
+            />
+          )}
+        </Article>
+        <Article>
+          <Input
+            label="Youtube Link"
+            name="youtube"
+            value={recipe.youtube}
+            handleChange={handleChange}
+          />
+        </Article>
+        <FilledButton
+          label={location.pathname.includes("/add") ? "Next" : "Edit"}
+          fullwidth
+          color={defaultTheme.secondaryColor}
+          shape="rounded"
+          spacing={spacing.xxs}
+          handleClick={
+            location.pathname.includes("/add") ? handleNext : handleEdit
+          }
         />
-      </Item>
-      <Item>
-        <Input
-          label="Photo URL"
-          name="photo"
-          value={recipe.photo}
-          handleChange={handleChange}
-        />
-      </Item>
-      <Buttons>
-        {location.pathname.includes("/add") ? (
-          <Button label="Next" variant="primary" handleClick={handleNext} />
-        ) : (
-          <Button label="Edit" variant="primary" handleClick={handleEdit} />
-        )}
-      </Buttons>
+      </Section>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
+const Section = styled.section``;
+
+const Article = styled.article`
   width: 100%;
-  height: 100%;
-  padding: 2rem;
-  overflow: auto;
-`;
-
-const Header = styled.header`
-  text-align: center;
-
-  .title {
-    font-family: ${tertiaryFont};
-    color: ${neutral[600]};
-    margin: ${spacing.xxxs} 0;
-  }
-`;
-
-const Item = styled.div`
-  width: 100%;
-  margin: 1.5rem 0;
-
-  .label {
-    font-size: 0.925rem;
-    color: #94928f;
-  }
-
-  button {
-    background-color: transparent;
-    border: 1px solid #d2d2d7;
-    border-radius: ${spacing.xxxs};
-    padding: ${spacing.s};
-    font-size: 0.9rem;
-    width: 100%;
-    cursor: pointer;
-  }
-`;
-
-const Flex = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Buttons = styled.div`
-  ${Flex}
-  margin: 4rem 0;
-
-  button {
-    width: 100%;
-  }
+  margin: ${spacing.xl} 0;
 `;
 
 const mapStateToProps = (state) => {

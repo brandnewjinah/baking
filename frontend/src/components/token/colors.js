@@ -34,6 +34,7 @@ export const peach = {
 export const primaryColor = {
   red: "#ed3b24",
   gold: "#a18f7a",
+  yellow: "#ffba21",
   error: "#ff0000",
   orange: "#d46f4a",
   darksage: "#6e7e74",

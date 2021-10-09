@@ -4,10 +4,13 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //import components
 import Layout from "./components/Layout";
 
+//import template
+import Design from "./pages/Design";
+
 //import pages
 import Home from "./pages/Home";
 import New from "./pages/recipes/New";
-import NewIngredients from "./pages/recipes/NewIngredients_Copy";
+import NewIngredients from "./pages/recipes/NewIngredients";
 import NewDirections from "./pages/recipes/NewDirections";
 import Recipes from "./pages/recipes/Recipes";
 import RecipeDetail from "./pages/recipes/RecipeDetail";
@@ -18,11 +21,11 @@ const Routes = () => {
       <Switch>
         <Layout>
           <Route exact path="/" component={Home} />
+          <Route exact path="/design" component={Design} />
           <Route exact path="/recipes/" component={Recipes} />
           <Route exact path="/recipes/add" component={New} />
 
           <Route exact path="/recipe/:recipeId" component={RecipeDetail} />
-          <Route exact path="/recipe/edit/:recipeId" component={New} />
           <Route
             exact
             path="/recipes/:recipeId/ingredients"
@@ -36,6 +39,11 @@ const Routes = () => {
           <Route
             exact
             path="/recipes/:recipeId/directions"
+            component={NewDirections}
+          />
+          <Route
+            exact
+            path="/recipes/edit/:recipeId/directions"
             component={NewDirections}
           />
         </Layout>
