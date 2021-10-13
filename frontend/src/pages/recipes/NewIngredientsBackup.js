@@ -13,16 +13,12 @@ import {
   OutlinedButton,
   TextButton,
 } from "../../components/Button";
+import { ToggleSwitch } from "../../components/Toggle";
 import Select from "react-select";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import {
-  spacing,
-  neutral,
-  defaultTheme,
-  typeScale,
-} from "../../components/token";
+import { spacing, neutral, defaultTheme } from "../../components/token";
 import { Plus } from "../../assets/Icons";
 
 //local data
@@ -35,41 +31,57 @@ import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
   const history = useHistory();
+
+  //this recipe
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
 
-  const [serving, setServing] = useState({
-    serving: "",
-  });
+  //handle serving
+  const [serving, setServing] = useState("");
 
+  const handleServingInput = ({ currentTarget: input }) => {
+    setServing(input.value);
+  };
+
+  //select ingredient
   const [ingredients, setIngredients] = useState([
     { id: 1, ingredient: "", amount: "", unit: "g" },
   ]);
 
-  const [errors, setErrors] = useState({});
-
   const [showIng, setShowIng] = useState(false);
 
-  const setSelected = (id, selected) => {
-    // console.log(id, selected);
-    // const newIngredients = [...ingredients];
-    // let index = newIngredients.findIndex((item) => item.id === id);
-    // let thisIngredient = newIngredients[index];
-    // thisIngredient = {
-    //   ...thisIngredient,
-    //   id: id,
-    //   ingredient: selected,
-    // };
-    // newIngredients[index] = thisIngredient;
-    // setIngredients(newIngredients);
-  };
+  const [currIng, setCurrIng] = useState();
 
-  const handleModal = (name) => {
+  const handleModal = (id) => {
     setShowIng(!showIng);
+    setCurrIng(id);
   };
 
-  const formatGroupLabel = (data) => <span>{data.label}</span>;
+  const setSelected = (id, selected) => {
+    const newIngredients = [...ingredients];
+    let index = newIngredients.findIndex((item) => item.id === id);
+    let thisIngredient = newIngredients[index];
+    thisIngredient = {
+      ...thisIngredient,
+      id: id,
+      ingredient: selected,
+    };
+    newIngredients[index] = thisIngredient;
+    setIngredients(newIngredients);
+  };
+
+  //add amount
+  const handleInput = ({ currentTarget: input }) => {
+    let newIngredients = [...ingredients];
+    let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
+
+    let currentItem = { ...newIngredients[index] };
+    currentItem[input.name] = input.value;
+    newIngredients[index] = currentItem;
+
+    setIngredients(newIngredients);
+  };
 
   const selectStyles = {
     control: (styles) => ({
@@ -77,19 +89,6 @@ const NewIngredients = (props) => {
       padding: ".3em 0",
       borderRadius: ".35em",
     }),
-  };
-
-  const handleSelect = (ing, name) => {
-    const newIngredients = [...ingredients];
-    const index = newIngredients.findIndex((item) => item.id === name.name);
-    let thisIngredient = newIngredients[index];
-    thisIngredient = {
-      ...thisIngredient,
-      ingredient: ing.label,
-    };
-    newIngredients[index] = thisIngredient;
-
-    setIngredients(newIngredients);
   };
 
   const handleUnitSelect = (item, name) => {
@@ -105,23 +104,7 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
-  const handleServingInput = ({ currentTarget: input }) => {
-    let newServing = { ...serving };
-    newServing[input.name] = input.value;
-    setServing(newServing);
-  };
-
-  const handleInput = ({ currentTarget: input }) => {
-    let newIngredients = [...ingredients];
-    let index = newIngredients.findIndex((i) => i.id === parseInt(input.id));
-
-    let currentItem = { ...newIngredients[index] };
-    currentItem[input.name] = input.value;
-    newIngredients[index] = currentItem;
-
-    setIngredients(newIngredients);
-  };
-
+  //add ingredient
   const handleAdd = () => {
     let NewIngredients = [...ingredients];
     let id = NewIngredients[NewIngredients.length - 1].id + 1;
@@ -132,23 +115,27 @@ const NewIngredients = (props) => {
     setIngredients(NewIngredients);
   };
 
+  //delete ingredient
   const handleIngDelete = (id) => {
     let NewIngredients = [...ingredients];
     NewIngredients = NewIngredients.filter((i) => i.id !== id);
     setIngredients(NewIngredients);
   };
 
+  //Next buttom
   const handleNext = () => {
     props.addIngredients(ingredients, serving, recipeId);
-
     history.push(`/recipes/${recipeId}/directions`);
   };
 
   return (
     <Wrapper>
-      <Heading kicker={thisRecipe.category} title={thisRecipe.name}></Heading>
+      <Heading
+        kicker={thisRecipe.category.value}
+        title={thisRecipe.name}
+      ></Heading>
       <Section>
-        <p className="p3 upper">Serving Size</p>
+        <header className="p3 upper">Serving Size</header>
         <Article>
           <div className="full ">
             <Input
@@ -162,83 +149,90 @@ const NewIngredients = (props) => {
         </Article>
       </Section>
       <Section>
-        <p className="p3 upper">Ingredients</p>
-        {ingredients.map((item, idx) => (
-          <Article key={idx}>
-            <OutlinedButton
-              label={
-                item.ingredient && item.ingredient !== undefined
-                  ? item.ingredient
-                  : "Select"
-              }
-              shape="rounded"
-              fullwidth
-              thin
-              color={neutral[200]}
-              textColor={neutral[600]}
-              handleClick={() => handleModal("category")}
-            />
+        <div className="flex">
+          <header className="p3 upper">Ingredients</header>
+          <div>
+            <ToggleSwitch small />
+          </div>
+        </div>
 
-            {showIng && (
-              <ResSelect
-                setShowModal={setShowIng}
-                id={item.id}
-                name="Ingredient"
-                data={groupedOptions}
-                // setSelected={(id, selected) => setSelected(id, selected)}
-                setSelected={() => console.log(item.id)}
+        <Group>
+          <Input placeholder="Group name" name="amount" shape="underline" />
+          {ingredients.map((item, idx) => (
+            <Article key={idx}>
+              <OutlinedButton
+                label={
+                  item.ingredient.value && item.ingredient.value !== undefined
+                    ? item.ingredient.value
+                    : "Select"
+                }
+                shape="rounded"
+                fullwidth
+                thin
+                color={neutral[200]}
+                textColor={neutral[600]}
+                handleClick={() => handleModal(item.id)}
               />
-            )}
 
-            <div className="flex">
-              <div className="half ">
-                <Input
-                  id={item.id}
-                  placeholder="Amount"
-                  name="amount"
-                  type="number"
-                  value={item.amount}
-                  handleChange={handleInput}
+              {showIng && (
+                <ResSelect
+                  setShowModal={setShowIng}
+                  id={currIng}
+                  name="Ingredient"
+                  data={groupedOptions}
+                  setSelected={(id, selected) => setSelected(id, selected)}
                 />
-              </div>
+              )}
 
-              <div className="half">
-                <Select
-                  name={item.id}
-                  defaultValue={{ label: "gram", value: "g", id: 1 }}
-                  options={
-                    metricMeasure &&
-                    metricMeasure.map((item) => ({
-                      label: item.name,
-                      value: item.value,
-                      id: item.id,
-                    }))
-                  }
-                  styles={selectStyles}
-                  onChange={(event, name) => handleUnitSelect(event, name)}
-                />
+              <div className="flex">
+                <div className="half ">
+                  <Input
+                    id={item.id}
+                    placeholder="Amount"
+                    name="amount"
+                    type="number"
+                    value={item.amount}
+                    handleChange={handleInput}
+                  />
+                </div>
+
+                <div className="half">
+                  <Select
+                    name={item.id}
+                    defaultValue={{ label: "gram", value: "g", id: 1 }}
+                    options={
+                      metricMeasure &&
+                      metricMeasure.map((item) => ({
+                        label: item.name,
+                        value: item.value,
+                        id: item.id,
+                      }))
+                    }
+                    styles={selectStyles}
+                    onChange={(event, name) => handleUnitSelect(event, name)}
+                  />
+                </div>
               </div>
-            </div>
-            {idx === 0 ? (
-              <div></div>
-            ) : (
-              <div
-                className="p2 center vspace"
-                onClick={() => handleIngDelete(item.id)}
-              >
-                delete
-              </div>
-            )}
-          </Article>
-        ))}
+              {idx === 0 ? (
+                <div></div>
+              ) : (
+                <div
+                  className="p2 center vspace"
+                  onClick={() => handleIngDelete(item.id)}
+                >
+                  delete
+                </div>
+              )}
+            </Article>
+          ))}
+          <Add>
+            <Plus width={20} height={20} color="#000" stroke={2} />
+            <TextButton label="Add More" handleClick={handleAdd} />
+          </Add>
+        </Group>
       </Section>
-      <Add>
-        <Plus width={20} height={20} color="#000" stroke={2} />
-        {/* <Button label="Add More" variant="tertiary" handleClick={handleAdd} /> */}
-        <TextButton label="Add More" handleClick={handleAdd} />
-      </Add>
+
       <Buttons>
-        {/* <Button label="Next" variant="primary" handleClick={handleNext} /> */}
         <FilledButton
           label="Next"
           color={defaultTheme.secondaryColor}
@@ -257,26 +251,19 @@ const Flex = css`
   justify-content: center;
 `;
 
-// const Wrapper = styled.div`
-
-//   .sbody {
-//     font-size: ${typeScale.sbody};
-//     color: ${neutral[500]};
-//     letter-spacing: 0.025rem;
-//   }
-
-//   .upper {
-//     text-transform: uppercase;
-//   }
-// `;
-
 const Section = styled.section`
   padding: ${spacing.s} 0;
 
-  .p3 {
-    letter-spacing: 0.03rem;
-    color: ${neutral[400]};
+  .flex {
+    ${Flex}
+    justify-content: space-between;
   }
+`;
+
+const Group = styled.article`
+  background-color: ${neutral[50]};
+  border-radius: ${spacing.xxs};
+  padding: ${spacing.xxs};
 `;
 
 const Article = styled.article`
@@ -292,11 +279,6 @@ const Article = styled.article`
   .half {
     flex: 0 0 49.5%;
     padding: ${spacing.xxs} 0;
-  }
-
-  .flex {
-    ${Flex}
-    justify-content: space-between;
   }
 
   button {

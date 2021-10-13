@@ -6,9 +6,9 @@ import { neutral, spacing, typeScale } from "./token";
 
 import { Close } from "../assets/Icons";
 
-const ResSelect = ({ setShowModal, data, setSelected, name, id }) => {
+const ResSelect = ({ setShowModal, data, setSelected, name }) => {
   const handleSelect = (item) => {
-    setSelected(id, item);
+    setSelected(item);
     setShowModal((prev) => !prev);
   };
 

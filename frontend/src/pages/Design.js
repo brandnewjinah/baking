@@ -4,6 +4,9 @@ import styled from "styled-components";
 //import token
 import { spacing, neutral, defaultTheme } from "../components/token";
 
+//import components
+import { ToggleSwitch } from "../components/Toggle";
+
 const Design = () => {
   return (
     <Wrapper>
@@ -93,6 +96,9 @@ const Design = () => {
         >
           xxl
         </div>
+      </Section>
+      <Section>
+        <ToggleSwitch />
       </Section>
     </Wrapper>
   );
