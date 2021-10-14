@@ -1,17 +1,17 @@
 export const metricMeasure = [
   {
     id: 1,
-    name: "gram",
+    name: "g",
     value: "g",
   },
   {
     id: 2,
-    name: "milliliter",
+    name: "ml",
     value: "ml",
   },
   {
     id: 3,
-    name: "each",
-    value: "each",
+    name: "ea",
+    value: "ea",
   },
 ];

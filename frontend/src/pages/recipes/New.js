@@ -7,7 +7,7 @@ import Wrapper from "../../components/layout/Wrapper";
 import Heading from "../../components/layout/Heading";
 
 //import components
-import { Input } from "../../components/Input";
+import { Input, Floating } from "../../components/Input";
 import { FilledButton, OutlinedButton } from "../../components/Button";
 import ResSelect from "../../components/ResSelect";
 
@@ -54,7 +54,7 @@ const New = (props) => {
   //add new category
   const [showCategory, setShowCategory] = useState(false);
   const [showAuthor, setShowAuthor] = useState(false);
-  const setSelected = (id, selected) => {
+  const setSelected = (group, id, selected) => {
     const newRecipe = { ...recipe };
     newRecipe[id] = selected;
     setRecipe(newRecipe);
@@ -110,12 +110,11 @@ const New = (props) => {
   return (
     <Wrapper>
       <Heading
-        title={location.pathname.includes("/add") ? "Add a New Recipe" : "Edit"}
+        title={location.pathname.includes("/add") ? "Add a new recipe" : "Edit"}
       />
-      <p className="p3 center">* required</p>
       <Section>
         <Article>
-          <Input
+          <Floating
             label="Recipe Name"
             name="name"
             required
@@ -125,29 +124,29 @@ const New = (props) => {
           />
         </Article>
         <Article>
-          <Input
+          <Floating
             label="Short Description"
             name="description"
             value={recipe.description}
             handleChange={handleChange}
           />
         </Article>
+
         <Article>
-          <p className="label">Category *</p>
-          <OutlinedButton
-            error={errors.category}
-            label={
-              recipe.category.value && recipe.category.value !== undefined
-                ? recipe.category.value
-                : "Select"
-            }
-            shape="rounded"
-            fullwidth
-            thin
-            color={neutral[200]}
-            textColor={neutral[600]}
-            handleClick={() => handleModal("category")}
-          />
+          <div className="select">
+            <p className="label">
+              {recipe.category.value && recipe.category.value !== undefined
+                ? "Category"
+                : ""}
+            </p>
+            <div className="selectBtn" onClick={() => handleModal("category")}>
+              {recipe.category.value && recipe.category.value !== undefined ? (
+                <p>{recipe.category.value}</p>
+              ) : (
+                <p className="defaultLabel">Select Category *</p>
+              )}
+            </div>
+          </div>
           {errors.category && (
             <small className="errorTxt">{errors.category}</small>
           )}
@@ -157,63 +156,97 @@ const New = (props) => {
               id="category"
               name="Category"
               data={categoryOptions}
-              setSelected={(id, selected) => setSelected(id, selected)}
+              setSelected={(group, id, selected) =>
+                setSelected(group, id, selected)
+              }
             />
           )}
         </Article>
         <Article>
-          <p className="label">Author</p>
-          <OutlinedButton
-            label={
-              recipe.author.value && recipe.author.value !== undefined
-                ? recipe.author.value
-                : "Select"
-            }
-            shape="rounded"
-            fullwidth
-            thin
-            color={neutral[200]}
-            textColor={neutral[600]}
-            handleClick={() => handleModal("author")}
-          />
+          <div className="select">
+            <p className="label">
+              {recipe.category.value && recipe.category.value !== undefined
+                ? "Category"
+                : ""}
+            </p>
+            <div className="selectBtn" onClick={() => handleModal("author")}>
+              {recipe.author.value && recipe.author.value !== undefined ? (
+                <p>{recipe.author.value}</p>
+              ) : (
+                <p className="defaultLabel">Select Author</p>
+              )}
+            </div>
+          </div>
+
           {showAuthor && (
             <ResSelect
               setShowModal={setShowAuthor}
               id="author"
               name="Author"
               data={authorOptions}
-              setSelected={(name, selected) => setSelected(name, selected)}
+              setSelected={(group, name, selected) =>
+                setSelected(group, name, selected)
+              }
             />
           )}
         </Article>
         <Article>
-          <Input
+          <Floating
             label="Youtube Link"
             name="youtube"
             value={recipe.youtube}
             handleChange={handleChange}
           />
         </Article>
-        <FilledButton
-          label={location.pathname.includes("/add") ? "Next" : "Edit"}
-          fullwidth
-          color={defaultTheme.secondaryColor}
-          shape="rounded"
-          spacing={spacing.xxs}
-          handleClick={
-            location.pathname.includes("/add") ? handleNext : handleEdit
-          }
-        />
+        <div className="btnContainer">
+          <FilledButton
+            label={location.pathname.includes("/add") ? "Next" : "Edit"}
+            fullwidth
+            color={defaultTheme.secondaryColor}
+            shape="rounded"
+            spacing={spacing.xxs}
+            handleClick={
+              location.pathname.includes("/add") ? handleNext : handleEdit
+            }
+          />
+        </div>
       </Section>
     </Wrapper>
   );
 };
 
-const Section = styled.section``;
+const Section = styled.section`
+  .btnContainer {
+    margin-top: ${spacing.xxl};
+  }
+`;
 
 const Article = styled.article`
   width: 100%;
   margin: ${spacing.xl} 0;
+
+  .select {
+    padding: ${spacing.s} 0 0;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    color: #3951b2;
+  }
+
+  .selectBtn {
+    width: 100%;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid #d2d2d7;
+    padding: ${spacing.xxxs} 0 ${spacing.xs};
+  }
+
+  .defaultLabel {
+    color: #888;
+    padding-bottom: ${spacing.xxs};
+  }
 `;
 
 const mapStateToProps = (state) => {

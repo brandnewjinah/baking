@@ -294,15 +294,16 @@ const FloatingContainer = styled.div<StyleProps>`
   input {
     width: 100%;
     font-size: 1.05rem;
-    height: 50px;
-    border-radius: 0.35rem;
-    border: 1px solid #d2d2d7;
-    padding: 0.25rem 0.875rem 0;
+    height: 68px;
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid #d2d2d7;
+    padding: 1.5rem 0.875rem 0 0;
     transition: all 0.3s ease-out;
     appearance: none;
 
     &:focus {
-      box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.6);
+      /* box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.6); */
       outline: none;
     }
   }
@@ -311,18 +312,18 @@ const FloatingContainer = styled.div<StyleProps>`
     pointer-events: none;
     position: absolute;
     color: #888;
-    top: 0;
+    top: 0.5em;
     left: 0;
-    margin: 1rem 0 0 0.875rem;
-    transition: all 0.3s ease-out;
+    margin: 1rem 0 0 0;
+    transition: all 0.1s ease-out;
   }
 
   input:focus + label, 
   //placeholder-shown means input is empty, thus placeholder is shown. So apply the style when placeholder isn't shown, meaning when user typed something in the input field.
   input:not(:placeholder-shown) + label {
-    font-size: 0.75rem;
-    margin-top: 0.25em;
-    left: 0.05rem;
+    font-size: 0.875rem;
+    margin-top: 0;
+    left: 0;
     color: #3951b2;
   }
 

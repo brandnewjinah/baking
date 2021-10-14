@@ -11,7 +11,7 @@ const Wrapper = ({ children }) => {
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  padding: 2rem;
+  padding: 2rem 1.35rem;
 
   h6 {
     color: ${neutral[400]};
@@ -55,8 +55,38 @@ const Container = styled.div`
     padding: ${spacing.xxs} 0;
   }
 
+  .three {
+    flex: 0 0 29.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .four {
+    flex: 0 0 39.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .fourhalf {
+    flex: 0 0 44.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
   .five {
     flex: 0 0 49.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .fivehalf {
+    flex: 0 0 54.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .six {
+    flex: 0 0 59.5%;
+    padding: ${spacing.xxs} 0;
+  }
+
+  .seven {
+    flex: 0 0 69.5%;
     padding: ${spacing.xxs} 0;
   }
 

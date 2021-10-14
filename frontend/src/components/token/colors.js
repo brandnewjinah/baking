@@ -11,6 +11,7 @@ export const neutral = {
 };
 
 export const blue = {
+  10: "#f6f8fa",
   100: "#6668A4",
   200: "#515397",
   300: "#3B3D8A",

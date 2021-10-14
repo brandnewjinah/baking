@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import styled from "styled-components";
 
 //import token
-import { neutral, spacing, defaultTheme } from "../token";
+import { neutral, spacing, primaryFont } from "../token";
 
 export interface Props {
   kicker?: string;
@@ -19,11 +19,12 @@ const Heading: FC<Props> = ({ kicker, title }) => {
 };
 
 const Container = styled.div`
-  text-align: center;
+  /* text-align: center; */
   padding: ${spacing.m} 0;
 
   .title {
-    font-family: ${defaultTheme.heading};
+    font-family: ${primaryFont};
+    font-weight: 800;
     color: ${neutral[600]};
     margin: ${spacing.xxxs} 0;
   }

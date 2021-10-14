@@ -8,17 +8,12 @@ import Heading from "../../components/layout/Heading";
 
 //import components
 import { Input } from "../../components/Input";
-import {
-  FilledButton,
-  OutlinedButton,
-  TextButton,
-} from "../../components/Button";
-import { ToggleSwitch } from "../../components/Toggle";
+import { FilledButton, TextButton } from "../../components/Button";
 import Select from "react-select";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, neutral, defaultTheme } from "../../components/token";
+import { spacing, neutral, blue, defaultTheme } from "../../components/token";
 import { Plus } from "../../assets/Icons";
 
 //local data
@@ -32,7 +27,7 @@ import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
 const NewIngredients = (props) => {
   const history = useHistory();
 
-  //this recipe
+  //this recipe info
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
@@ -44,6 +39,7 @@ const NewIngredients = (props) => {
     setServing(input.value);
   };
 
+  //handle ingredients
   const [ingredients, setIngredients] = useState([
     {
       id: 1,
@@ -52,25 +48,32 @@ const NewIngredients = (props) => {
     },
   ]);
 
+  //handle modal
   const [showIng, setShowIng] = useState(false);
-
   const [current, setCurrent] = useState({});
-
-  const handleModal = (group, item) => {
+  const handleModal = (group, ingredient) => {
     setShowIng(!showIng);
-    setCurrent({ group, item });
+    setCurrent({ group, ingredient });
   };
 
-  const setSelected = (selected) => {
-    const newIngredients = [...ingredients];
-    let GroupIndex = newIngredients.findIndex(
-      (item) => item.id === current.group
-    );
-    let thisGroup = newIngredients[GroupIndex];
-    let itemIndex = thisGroup.items.findIndex(
-      (item) => item.id === current.item
-    );
+  //global methods to find current group and ingredient
+  const newIngredients = [...ingredients];
 
+  const findGroup = (group) => {
+    let GroupIndex = newIngredients.findIndex((item) => item.id === group);
+    let thisGroup = {
+      index: GroupIndex,
+      ...newIngredients[GroupIndex],
+    };
+    return thisGroup;
+  };
+
+  //select ingredient
+  const handleSelected = (group, ingredient, selected) => {
+    let thisGroup = findGroup(group);
+
+    //find current item
+    let itemIndex = thisGroup.items.findIndex((item) => item.id === ingredient);
     let thisIngredient = thisGroup.items[itemIndex];
 
     thisIngredient = {
@@ -78,17 +81,15 @@ const NewIngredients = (props) => {
       id: selected.id,
       ingredient: selected.label,
     };
+
     thisGroup.items[itemIndex] = thisIngredient;
-    newIngredients[GroupIndex] = thisGroup;
+    newIngredients[thisGroup.index] = thisGroup;
     setIngredients(newIngredients);
   };
 
   //add amount
   const handleAmount = ({ currentTarget: input }, group, ingredient) => {
-    //find current group
-    const newIngredients = [...ingredients];
-    let GroupIndex = newIngredients.findIndex((item) => item.id === group);
-    let thisGroup = newIngredients[GroupIndex];
+    let thisGroup = findGroup(group);
 
     //find current item
     let itemIndex = thisGroup.items.findIndex((item) => item.id === ingredient);
@@ -100,23 +101,12 @@ const NewIngredients = (props) => {
       amount: input.value,
     };
     thisGroup.items[itemIndex] = thisIngredient;
-    newIngredients[GroupIndex] = thisGroup;
+    newIngredients[thisGroup.index] = thisGroup;
     setIngredients(newIngredients);
   };
 
-  const selectStyles = {
-    control: (styles) => ({
-      ...styles,
-      padding: ".3em 0",
-      borderRadius: ".35em",
-    }),
-  };
-
   const handleUnit = (e, group, ingredient) => {
-    //find current group
-    const newIngredients = [...ingredients];
-    let GroupIndex = newIngredients.findIndex((item) => item.id === group);
-    let thisGroup = newIngredients[GroupIndex];
+    let thisGroup = findGroup(group);
 
     //find current item
     let itemIndex = thisGroup.items.findIndex((item) => item.id === ingredient);
@@ -128,15 +118,13 @@ const NewIngredients = (props) => {
       unit: e.value,
     };
     thisGroup.items[itemIndex] = thisIngredient;
-    newIngredients[GroupIndex] = thisGroup;
+    newIngredients[thisGroup.index] = thisGroup;
     setIngredients(newIngredients);
   };
 
   //add item
   const handleAddItem = (group) => {
-    const newIngredients = [...ingredients];
-    let GroupIndex = newIngredients.findIndex((item) => item.id === group);
-    let thisGroup = newIngredients[GroupIndex];
+    let thisGroup = findGroup(group);
     let thisGroupItems = thisGroup.items;
     let id = thisGroupItems[thisGroupItems.length - 1].id + 1;
 
@@ -150,7 +138,7 @@ const NewIngredients = (props) => {
       items: thisGroupItems,
     };
 
-    newIngredients[GroupIndex] = thisGroup;
+    newIngredients[thisGroup.index] = thisGroup;
     setIngredients(newIngredients);
   };
 
@@ -171,10 +159,7 @@ const NewIngredients = (props) => {
 
   //delete ingredient
   const handleDeleteItem = (group, ingredient) => {
-    //find current group
-    const newIngredients = [...ingredients];
-    let GroupIndex = newIngredients.findIndex((item) => item.id === group);
-    let thisGroup = newIngredients[GroupIndex];
+    let thisGroup = findGroup(group);
 
     //delete current item
     let thisGroupItems = thisGroup.items;
@@ -183,7 +168,7 @@ const NewIngredients = (props) => {
       ...thisGroup,
       items: thisGroupItems,
     };
-    newIngredients[GroupIndex] = thisGroup;
+    newIngredients[thisGroup.index] = thisGroup;
     setIngredients(newIngredients);
   };
 
@@ -200,6 +185,23 @@ const NewIngredients = (props) => {
   const handleNext = () => {
     props.addIngredients(ingredients, serving, recipeId);
     history.push(`/recipes/${recipeId}/directions`);
+  };
+
+  const selectStyles = {
+    control: (styles) => ({
+      ...styles,
+      padding: ".3em 0",
+      borderRadius: ".35em",
+      border: "none",
+    }),
+    valueContainer: (styles) => ({
+      ...styles,
+      padding: ".3em .5em",
+    }),
+    dropdownIndicator: (styles) => ({
+      ...styles,
+      padding: "4px",
+    }),
   };
 
   return (
@@ -223,82 +225,70 @@ const NewIngredients = (props) => {
         </Article>
       </Section>
       <Section>
-        <div className="flex">
-          <header className="p3 upper">Ingredients</header>
-          <div>
-            <ToggleSwitch small />
-          </div>
-        </div>
-
+        <header className="p3 upper">Ingredients</header>
         {ingredients.map((group, idx) => (
           <Group>
             <Input placeholder="Group name" name="amount" shape="underline" />
             {group.items.map((item, idx) => (
               <Article key={idx}>
-                <OutlinedButton
-                  label={
-                    item.ingredient && item.ingredient !== undefined
-                      ? item.ingredient
-                      : "Select"
-                  }
-                  shape="rounded"
-                  fullwidth
-                  thin
-                  color={neutral[200]}
-                  textColor={neutral[600]}
-                  handleClick={() => handleModal(group.id, item.id)}
-                />
-                {showIng && (
-                  <ResSelect
-                    setShowModal={setShowIng}
-                    name="Ingredient"
-                    data={groupedOptions}
-                    setSelected={(selected) => setSelected(selected)}
-                  />
-                )}
                 <div className="flex">
-                  <div className="half ">
-                    <Input
-                      id={item.id}
-                      placeholder="Amount"
-                      name="amount"
-                      type="number"
-                      value={item.amount}
-                      handleChange={(e) => {
-                        handleAmount(e, group.id, item.id);
-                      }}
-                    />
+                  <div className="fivehalf">
+                    <div onClick={() => handleModal(group.id, item.id)}>
+                      {item.ingredient && item.ingredient !== undefined
+                        ? item.ingredient
+                        : "Select"}
+                    </div>
+                    {showIng && (
+                      <ResSelect
+                        setShowModal={setShowIng}
+                        id={current.ingredient}
+                        group={current.group}
+                        name="Ingredient"
+                        data={groupedOptions}
+                        setSelected={(group, id, selected) =>
+                          handleSelected(group, id, selected)
+                        }
+                      />
+                    )}
                   </div>
-
-                  <div className="half">
-                    <Select
-                      name={item.id}
-                      defaultValue={{ label: "gram", value: "g", id: 1 }}
-                      options={
-                        metricMeasure &&
-                        metricMeasure.map((item) => ({
-                          label: item.name,
-                          value: item.value,
-                          id: item.id,
-                        }))
-                      }
-                      styles={selectStyles}
-                      onChange={(e) => {
-                        handleUnit(e, group.id, item.id);
-                      }}
-                    />
+                  <div className="fourhalf flex">
+                    <div className="five">
+                      <Input
+                        id={item.id}
+                        placeholder="Amount"
+                        name="amount"
+                        type="number"
+                        inputmode="decimal"
+                        shape="underline"
+                        value={item.amount}
+                        handleChange={(e) => {
+                          handleAmount(e, group.id, item.id);
+                        }}
+                      />
+                    </div>
+                    <div className="five">
+                      <Select
+                        name={item.id}
+                        defaultValue={{ label: "g", value: "g", id: 1 }}
+                        options={
+                          metricMeasure &&
+                          metricMeasure.map((item) => ({
+                            label: item.name,
+                            value: item.value,
+                            id: item.id,
+                          }))
+                        }
+                        components={{
+                          IndicatorSeparator: () => null,
+                        }}
+                        styles={selectStyles}
+                        onChange={(e) => {
+                          handleUnit(e, group.id, item.id);
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-                {idx === 0 ? (
-                  <div></div>
-                ) : (
-                  <div
-                    className="p2 center vspace"
-                    onClick={() => handleDeleteItem(group.id, item.id)}
-                  >
-                    delete
-                  </div>
-                )}
               </Article>
             ))}
             <Add>
@@ -307,12 +297,16 @@ const NewIngredients = (props) => {
                 handleClick={() => handleAddItem(group.id)}
               />
             </Add>
-            <Add>
-              <TextButton
-                label="Delete Group"
-                handleClick={() => handleDeleteGroup(group.id)}
-              />
-            </Add>
+            {idx === 0 ? (
+              <div></div>
+            ) : (
+              <Add>
+                <TextButton
+                  label="Delete Group"
+                  handleClick={() => handleDeleteGroup(group.id)}
+                />
+              </Add>
+            )}
           </Group>
         ))}
         <Add>
@@ -349,16 +343,17 @@ const Section = styled.section`
 `;
 
 const Group = styled.article`
-  background-color: ${neutral[50]};
-  border-radius: ${spacing.xxs};
-  padding: ${spacing.xxs};
-  margin: ${spacing.xxs} 0;
+  /* background-color: ${blue[10]};*/
+  border-radius: ${spacing.m};
+  padding: ${spacing.m} ${spacing.xs};
+  border: 1px solid ${neutral[100]};
+  margin: ${spacing.xl} 0;
 `;
 
 const Article = styled.article`
   width: 100%;
-  border-bottom: 1px solid ${neutral[200]};
-  padding: ${spacing.m} 0;
+  /* border-bottom: 1px solid ${neutral[200]}; */
+  padding: ${spacing.xxs} 0;
 
   .full {
     flex: 0 0 100%;
