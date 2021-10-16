@@ -82,11 +82,14 @@ const GlobalStyle = createGlobalStyle`
         letter-spacing: 0.03rem;
         text-transform: uppercase;
     } 
-    .p2, .label {
+    .p2 {
         font-size: ${typeScaleMobile.sbody}; 
     }
     .p3 {
         font-size: ${typeScaleMobile.helper}; 
+    }   
+     .label {
+        font-size: ${typeScaleMobile.label}; 
     }
     
 

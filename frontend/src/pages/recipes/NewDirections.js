@@ -3,7 +3,7 @@ import { useParams, useHistory, useLocation } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 //import layout components
-import Wrapper from "../../components/layout/Wrapper";
+import { Wrapper } from "../../components/layout/Wrapper";
 import Heading from "../../components/layout/Heading";
 
 //import componts

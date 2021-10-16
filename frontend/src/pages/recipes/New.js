@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 //import layout components
-import Wrapper from "../../components/layout/Wrapper";
+import { Wrapper } from "../../components/layout/Wrapper";
 import Heading from "../../components/layout/Heading";
+import {
+  Section,
+  Article,
+  Select,
+  BtnContainer,
+} from "../../components/layout/Containers";
 
 //import components
-import { Input, Floating } from "../../components/Input";
-import { FilledButton, OutlinedButton } from "../../components/Button";
+import { Floating } from "../../components/Input";
+import { FilledButton } from "../../components/Button";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, defaultTheme, neutral } from "../../components/token";
+import { spacing, defaultTheme } from "../../components/token";
 
 //local data
 import { categoryOptions, authorOptions } from "../../data/recipeData";
@@ -68,7 +74,10 @@ const New = (props) => {
     if (recipe.name === "") {
       errors.name = "Name is required";
     }
-    if (recipe.category === "") {
+    // if (recipe.category === "") {
+    //   errors.category = "Category is required";
+    // }
+    if (Object.keys(recipe.category).length === 0) {
       errors.category = "Category is required";
     }
     return Object.keys(errors).length === 0 ? null : errors;
@@ -85,7 +94,7 @@ const New = (props) => {
 
     let newRecipe = { ...recipe, id: newId };
     props.addRecipe(newRecipe);
-    history.push(`/recipes/${newId}/ingredients`);
+    history.push(`/recipes/${newId}/serving`);
   };
 
   //Edit Button
@@ -113,7 +122,7 @@ const New = (props) => {
         title={location.pathname.includes("/add") ? "Add a new recipe" : "Edit"}
       />
       <Section>
-        <Article>
+        <Article padding={`${spacing.xl} 0`}>
           <Floating
             label="Recipe Name"
             name="name"
@@ -123,7 +132,7 @@ const New = (props) => {
             handleChange={handleChange}
           />
         </Article>
-        <Article>
+        <Article padding={`${spacing.xl} 0`}>
           <Floating
             label="Short Description"
             name="description"
@@ -132,24 +141,30 @@ const New = (props) => {
           />
         </Article>
 
-        <Article>
-          <div className="select">
+        <Article padding={`${spacing.xl} 0`}>
+          <Select>
             <p className="label">
               {recipe.category.value && recipe.category.value !== undefined
                 ? "Category"
                 : ""}
             </p>
-            <div className="selectBtn" onClick={() => handleModal("category")}>
+            <div
+              className={errors.category ? "selectBtn error" : "selectBtn"}
+              onClick={() => handleModal("category")}
+            >
               {recipe.category.value && recipe.category.value !== undefined ? (
                 <p>{recipe.category.value}</p>
               ) : (
-                <p className="defaultLabel">Select Category *</p>
+                <>
+                  {errors.category ? (
+                    <p className="errorTxt">Category Required</p>
+                  ) : (
+                    <p className="defaultLabel">Select Category *</p>
+                  )}
+                </>
               )}
             </div>
-          </div>
-          {errors.category && (
-            <small className="errorTxt">{errors.category}</small>
-          )}
+          </Select>
           {showCategory && (
             <ResSelect
               setShowModal={setShowCategory}
@@ -162,11 +177,11 @@ const New = (props) => {
             />
           )}
         </Article>
-        <Article>
-          <div className="select">
+        <Article padding={`${spacing.xl} 0`}>
+          <Select>
             <p className="label">
-              {recipe.category.value && recipe.category.value !== undefined
-                ? "Category"
+              {recipe.author.value && recipe.author.value !== undefined
+                ? "Author"
                 : ""}
             </p>
             <div className="selectBtn" onClick={() => handleModal("author")}>
@@ -176,8 +191,7 @@ const New = (props) => {
                 <p className="defaultLabel">Select Author</p>
               )}
             </div>
-          </div>
-
+          </Select>
           {showAuthor && (
             <ResSelect
               setShowModal={setShowAuthor}
@@ -190,7 +204,7 @@ const New = (props) => {
             />
           )}
         </Article>
-        <Article>
+        <Article padding={`${spacing.xl} 0`}>
           <Floating
             label="Youtube Link"
             name="youtube"
@@ -198,56 +212,22 @@ const New = (props) => {
             handleChange={handleChange}
           />
         </Article>
-        <div className="btnContainer">
+        <BtnContainer>
           <FilledButton
             label={location.pathname.includes("/add") ? "Next" : "Edit"}
             fullwidth
             color={defaultTheme.secondaryColor}
             shape="rounded"
-            spacing={spacing.xxs}
+            spacing={spacing.xxxxs}
             handleClick={
               location.pathname.includes("/add") ? handleNext : handleEdit
             }
           />
-        </div>
+        </BtnContainer>
       </Section>
     </Wrapper>
   );
 };
-
-const Section = styled.section`
-  .btnContainer {
-    margin-top: ${spacing.xxl};
-  }
-`;
-
-const Article = styled.article`
-  width: 100%;
-  margin: ${spacing.xl} 0;
-
-  .select {
-    padding: ${spacing.s} 0 0;
-  }
-
-  .label {
-    font-size: 0.875rem;
-    color: #3951b2;
-  }
-
-  .selectBtn {
-    width: 100%;
-    font-size: 1rem;
-    text-align: left;
-    cursor: pointer;
-    border-bottom: 1px solid #d2d2d7;
-    padding: ${spacing.xxxs} 0 ${spacing.xs};
-  }
-
-  .defaultLabel {
-    color: #888;
-    padding-bottom: ${spacing.xxs};
-  }
-`;
 
 const mapStateToProps = (state) => {
   return {

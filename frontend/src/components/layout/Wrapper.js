@@ -1,16 +1,63 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 //import token
 import { neutral, spacing, typeScaleMobile } from "../token";
 
-const Wrapper = ({ children }) => {
+export const Wrapper = ({ children }) => {
   return <Container>{children}</Container>;
 };
 
-const Container = styled.div`
+export const WrapperFull = ({ children }) => {
+  return <ContainerFull>{children}</ContainerFull>;
+};
+
+const Flex = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Global = css`
   width: 100%;
   height: 100%;
+
+  .flex {
+    ${Flex}
+    justify-content: space-between;
+  }
+
+  .flexCenter {
+    ${Flex}
+  }
+
+  .one {
+    flex: 0 0 9.5%;
+  }
+
+  .four {
+    flex: 0 0 39.5%;
+  }
+
+  .fourhalf {
+    flex: 0 0 44.5%;
+  }
+
+  .five {
+    flex: 0 0 49.5%;
+  }
+
+  .fivehalf {
+    flex: 0 0 54.5%;
+  }
+
+  .six {
+    flex: 0 0 59.5%;
+  }
+`;
+
+const Container = styled.div`
+  ${Global}
   padding: 2rem 1.35rem;
 
   h6 {
@@ -20,11 +67,6 @@ const Container = styled.div`
   .p3 {
     letter-spacing: 0.03rem;
     color: ${neutral[400]};
-  }
-
-  .label {
-    color: ${neutral[400]};
-    margin-bottom: ${spacing.xxxs};
   }
 
   .center {
@@ -37,12 +79,6 @@ const Container = styled.div`
 
   .vspace {
     padding: ${spacing.xxs} 0;
-  }
-
-  .errorTxt {
-    font-size: 0.7875rem;
-    color: red;
-    margin: 0.25em 0;
   }
 
   .half {
@@ -60,31 +96,6 @@ const Container = styled.div`
     padding: ${spacing.xxs} 0;
   }
 
-  .four {
-    flex: 0 0 39.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .fourhalf {
-    flex: 0 0 44.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .five {
-    flex: 0 0 49.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .fivehalf {
-    flex: 0 0 54.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .six {
-    flex: 0 0 59.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
   .seven {
     flex: 0 0 69.5%;
     padding: ${spacing.xxs} 0;
@@ -96,4 +107,6 @@ const Container = styled.div`
   }
 `;
 
-export default Wrapper;
+const ContainerFull = styled.div`
+  ${Global}
+`;

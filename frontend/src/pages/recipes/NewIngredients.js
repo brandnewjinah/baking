@@ -3,18 +3,29 @@ import { useParams, useHistory, useLocation } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 //import layout components
-import Wrapper from "../../components/layout/Wrapper";
+import { Wrapper, WrapperFull } from "../../components/layout/Wrapper";
 import Heading from "../../components/layout/Heading";
+import {
+  Section,
+  Article,
+  BtnContainer,
+} from "../../components/layout/Containers";
 
 //import components
-import { Input } from "../../components/Input";
-import { FilledButton, TextButton } from "../../components/Button";
+import { Input, Floating } from "../../components/Input";
+import { FilledButton, TextButton, IconButton } from "../../components/Button";
 import Select from "react-select";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, neutral, blue, defaultTheme } from "../../components/token";
-import { Plus } from "../../assets/Icons";
+import {
+  spacing,
+  neutral,
+  blue,
+  defaultTheme,
+  primaryColor,
+} from "../../components/token";
+import { Close } from "../../assets/Icons";
 
 //local data
 import { groupedOptions } from "../../data/ingredientData";
@@ -31,13 +42,6 @@ const NewIngredients = (props) => {
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
   const thisRecipe = props.recipes.find((item) => item.id === recipeId);
-
-  //handle serving
-  const [serving, setServing] = useState("");
-
-  const handleServingInput = ({ currentTarget: input }) => {
-    setServing(input.value);
-  };
 
   //handle ingredients
   const [ingredients, setIngredients] = useState([
@@ -183,7 +187,7 @@ const NewIngredients = (props) => {
 
   //Next buttom
   const handleNext = () => {
-    props.addIngredients(ingredients, serving, recipeId);
+    props.addIngredients(ingredients, recipeId);
     history.push(`/recipes/${recipeId}/directions`);
   };
 
@@ -205,178 +209,165 @@ const NewIngredients = (props) => {
   };
 
   return (
-    <Wrapper>
-      <Heading
-        kicker={thisRecipe.category.value}
-        title={thisRecipe.name}
-      ></Heading>
-      <Section>
-        <header className="p3 upper">Serving Size</header>
-        <Article>
-          <div className="full ">
-            <Input
-              placeholder="e.g. 15cm Round Cake Pan"
-              name="serving"
-              type="text"
-              value={serving.serving}
-              handleChange={handleServingInput}
-            />
-          </div>
-        </Article>
-      </Section>
-      <Section>
-        <header className="p3 upper">Ingredients</header>
-        {ingredients.map((group, idx) => (
-          <Group>
-            <Input placeholder="Group name" name="amount" shape="underline" />
-            {group.items.map((item, idx) => (
-              <Article key={idx}>
-                <div className="flex">
-                  <div className="fivehalf">
-                    <div onClick={() => handleModal(group.id, item.id)}>
-                      {item.ingredient && item.ingredient !== undefined
-                        ? item.ingredient
-                        : "Select"}
-                    </div>
-                    {showIng && (
-                      <ResSelect
-                        setShowModal={setShowIng}
-                        id={current.ingredient}
-                        group={current.group}
-                        name="Ingredient"
-                        data={groupedOptions}
-                        setSelected={(group, id, selected) =>
-                          handleSelected(group, id, selected)
-                        }
-                      />
-                    )}
-                  </div>
-                  <div className="fourhalf flex">
-                    <div className="five">
-                      <Input
-                        id={item.id}
-                        placeholder="Amount"
-                        name="amount"
-                        type="number"
-                        inputmode="decimal"
-                        shape="underline"
-                        value={item.amount}
-                        handleChange={(e) => {
-                          handleAmount(e, group.id, item.id);
-                        }}
-                      />
-                    </div>
-                    <div className="five">
-                      <Select
-                        name={item.id}
-                        defaultValue={{ label: "g", value: "g", id: 1 }}
-                        options={
-                          metricMeasure &&
-                          metricMeasure.map((item) => ({
-                            label: item.name,
-                            value: item.value,
-                            id: item.id,
-                          }))
-                        }
-                        components={{
-                          IndicatorSeparator: () => null,
-                        }}
-                        styles={selectStyles}
-                        onChange={(e) => {
-                          handleUnit(e, group.id, item.id);
-                        }}
-                      />
-                    </div>
-                  </div>
+    <>
+      <Wrapper>
+        <Heading
+          title="Add ingredients"
+          subtitle="Group ingredients?"
+        ></Heading>
+      </Wrapper>
+      <WrapperFull>
+        <Section>
+          <div className="background">
+            {ingredients.map((group, idx) => (
+              <Group>
+                <div className="nameContainer">
+                  <Floating label="Group name" name="amount" />
                 </div>
-              </Article>
+                {group.items.map((item, idx) => (
+                  <Article key={idx} padding={`0 0 ${spacing.l}`}>
+                    <div className="flex">
+                      <div className="five">
+                        <div onClick={() => handleModal(group.id, item.id)}>
+                          {item.ingredient && item.ingredient !== undefined
+                            ? item.ingredient
+                            : "Select"}
+                        </div>
+                        {showIng && (
+                          <ResSelect
+                            setShowModal={setShowIng}
+                            id={current.ingredient}
+                            group={current.group}
+                            name="Ingredient"
+                            data={groupedOptions}
+                            setSelected={(group, id, selected) =>
+                              handleSelected(group, id, selected)
+                            }
+                          />
+                        )}
+                      </div>
+                      <div className="four flex">
+                        <div className="five">
+                          <Input
+                            id={item.id}
+                            placeholder="Amount"
+                            name="amount"
+                            type="number"
+                            inputmode="decimal"
+                            shape="underline"
+                            align="right"
+                            value={item.amount}
+                            handleChange={(e) => {
+                              handleAmount(e, group.id, item.id);
+                            }}
+                          />
+                        </div>
+                        <div className="fourhalf">
+                          <Select
+                            name={item.id}
+                            defaultValue={{ label: "g", value: "g", id: 1 }}
+                            options={
+                              metricMeasure &&
+                              metricMeasure.map((item) => ({
+                                label: item.name,
+                                value: item.value,
+                                id: item.id,
+                              }))
+                            }
+                            components={{
+                              IndicatorSeparator: () => null,
+                            }}
+                            styles={selectStyles}
+                            onChange={(e) => {
+                              handleUnit(e, group.id, item.id);
+                            }}
+                          />
+                        </div>
+                      </div>
+                      {idx === 0 ? (
+                        <div className="one"></div>
+                      ) : (
+                        <div className="one flexCenter">
+                          <IconButton
+                            handleClick={() =>
+                              handleDeleteItem(group.id, item.id)
+                            }
+                          >
+                            <Close
+                              width={10}
+                              height={10}
+                              color={primaryColor.yellow}
+                              stroke={3}
+                            />
+                          </IconButton>
+                        </div>
+                      )}
+                    </div>
+                  </Article>
+                ))}
+                <Add>
+                  <TextButton
+                    label="Add Item"
+                    primaryColor={primaryColor.yellow}
+                    handleClick={() => handleAddItem(group.id)}
+                  />
+                </Add>
+                {idx === 0 ? (
+                  <div></div>
+                ) : (
+                  <Add>
+                    <TextButton
+                      label="Delete Group"
+                      handleClick={() => handleDeleteGroup(group.id)}
+                    />
+                  </Add>
+                )}
+              </Group>
             ))}
-            <Add>
-              <TextButton
-                label="Add Item"
-                handleClick={() => handleAddItem(group.id)}
-              />
-            </Add>
-            {idx === 0 ? (
-              <div></div>
-            ) : (
-              <Add>
-                <TextButton
-                  label="Delete Group"
-                  handleClick={() => handleDeleteGroup(group.id)}
-                />
-              </Add>
-            )}
-          </Group>
-        ))}
+          </div>
+        </Section>
         <Add>
-          <TextButton label="Add Group" handleClick={handleAddGroup} />
+          <FilledButton
+            label="Add Group"
+            primaryColor={primaryColor.yellow}
+            secondaryColor={primaryColor.lightyellow}
+            size="small"
+            shape="pill"
+            handleClick={handleAddGroup}
+          />
         </Add>
-      </Section>
 
-      <Buttons>
-        <FilledButton
-          label="Next"
-          color={defaultTheme.secondaryColor}
-          shape="rounded"
-          fullwidth
-          handleClick={handleNext}
-        />
-      </Buttons>
-    </Wrapper>
+        <Wrapper>
+          <BtnContainer>
+            <FilledButton
+              label="Next"
+              primaryColor={defaultTheme.secondaryColor}
+              shape="pill"
+              fullwidth
+              handleClick={handleNext}
+            />
+          </BtnContainer>
+        </Wrapper>
+      </WrapperFull>
+    </>
   );
 };
 
-const Flex = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Section = styled.section`
-  padding: ${spacing.s} 0;
-
-  .flex {
-    ${Flex}
-    justify-content: space-between;
-  }
-`;
-
 const Group = styled.article`
-  /* background-color: ${blue[10]};*/
-  border-radius: ${spacing.m};
-  padding: ${spacing.m} ${spacing.xs};
-  border: 1px solid ${neutral[100]};
-  margin: ${spacing.xl} 0;
-`;
+  margin-bottom: ${spacing.xl};
+  padding: 0 1.35rem;
+  background-color: white;
 
-const Article = styled.article`
-  width: 100%;
-  /* border-bottom: 1px solid ${neutral[200]}; */
-  padding: ${spacing.xxs} 0;
-
-  .full {
-    flex: 0 0 100%;
-    /* padding: ${spacing.xxs} 0; */
-  }
-
-  .half {
-    flex: 0 0 49.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  button {
-    width: 100%;
+  .nameContainer {
+    margin-bottom: ${spacing.xl};
   }
 `;
 
 const Add = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: ${spacing.m} 0;
-`;
-
-const Buttons = styled.div`
-  ${Flex}
-  margin: 4rem 0;
 `;
 
 const mapStateToProps = (state) => {

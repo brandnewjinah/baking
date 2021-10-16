@@ -24,6 +24,7 @@ export const typeScaleMobile = {
   header6: "0.725rem",
   body: "1rem",
   sbody: ".9125rem",
+  label: ".875rem",
   helper: "0.8rem",
   caption: "0.64rem",
 };

@@ -132,8 +132,14 @@ export const Floating: FC<Props> = ({
         onChange={handleChange}
       />
       <label htmlFor={name}>
-        {label}
-        {required && " *"}
+        {error ? (
+          <p className="errorLabel">{label} Required</p>
+        ) : (
+          <p>
+            {label}
+            {required && " *"}
+          </p>
+        )}
       </label>
       {type === "password" && (
         <div className="pw" onClick={() => setIsPassword(!isPassword)}>
@@ -144,7 +150,6 @@ export const Floating: FC<Props> = ({
           )}
         </div>
       )}
-      {error && <p className="errorTxt">error message</p>}
     </FloatingContainer>
   );
 };
@@ -199,8 +204,9 @@ export const TextArea: FC<Props> = ({
 const Global = css<StyleProps>`
   width: 100%;
   font-size: 1.05rem;
-  border-radius: ${(props) =>
-    props.shape === "underline" ? "none" : "0.35rem"};
+  /* border-radius: ${(props) =>
+    props.shape === "underline" ? "none" : "0.35rem"}; */
+  border-radius: 0;
   border-top: ${(props) =>
     props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
   border-left: ${(props) =>
@@ -209,7 +215,7 @@ const Global = css<StyleProps>`
     props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
   border-bottom: 1px solid #d2d2d7;
   padding: ${(props) =>
-    props.align === "right" ? `0 0.75rem 0 0` : `0 0 0 0.75rem`};
+    props.align === "right" ? `0 0.75rem 0 0` : `0 0 0 0.7rem`};
 `;
 
 const Wrapper = styled.div<StyleProps>`
@@ -297,7 +303,7 @@ const FloatingContainer = styled.div<StyleProps>`
     height: 68px;
     border-radius: 0;
     border: 0;
-    border-bottom: 1px solid #d2d2d7;
+    border-bottom: 1px solid ${neutral[200]};
     padding: 1.5rem 0.875rem 0 0;
     transition: all 0.3s ease-out;
     appearance: none;
@@ -308,19 +314,19 @@ const FloatingContainer = styled.div<StyleProps>`
     }
   }
 
-  label {
+  label p {
     pointer-events: none;
     position: absolute;
-    color: #888;
+    color: ${neutral[400]};
     top: 0.5em;
     left: 0;
     margin: 1rem 0 0 0;
     transition: all 0.1s ease-out;
   }
 
-  input:focus + label, 
+  input:focus + label p, 
   //placeholder-shown means input is empty, thus placeholder is shown. So apply the style when placeholder isn't shown, meaning when user typed something in the input field.
-  input:not(:placeholder-shown) + label {
+  input:not(:placeholder-shown) + label p {
     font-size: 0.875rem;
     margin-top: 0;
     left: 0;
@@ -336,8 +342,12 @@ const FloatingContainer = styled.div<StyleProps>`
   }
 
   .error {
-    border: 1px solid red;
-    background-color: rgba(255, 0, 0, 0.05);
+    border-bottom: 1px solid red;
+  }
+
+  .errorLabel {
+    top: 0.5em;
+    color: red;
   }
 
   .helper {

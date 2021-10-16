@@ -1,5 +1,6 @@
 // Action types
 const ADD_RECIPE = "ADD_RECIPE";
+const ADD_SERVING = "ADD_SERVING";
 const ADD_INGREDIENTS = "ADD_INGREDIENTS";
 const ADD_DIRECTIONS = "ADD_DIRECTIONS";
 const EDIT_RECIPE = "EDIT_RECIPE";
@@ -17,13 +18,24 @@ export const addRecipe = (item) => {
   };
 };
 
-export const addIngredients = (item, item2, id) => {
+export const addServing = (item, id) => {
+  return (dispatch) => {
+    dispatch({
+      type: ADD_SERVING,
+      payload: {
+        item,
+        id,
+      },
+    });
+  };
+};
+
+export const addIngredients = (item, id) => {
   return (dispatch) => {
     dispatch({
       type: ADD_INGREDIENTS,
       payload: {
         item,
-        item2,
         id,
       },
     });
@@ -79,8 +91,22 @@ const reducer = (state = initialState, action) => {
     return { ...state, recipes: newRecipes };
   }
 
+  if (action.type === ADD_SERVING) {
+    let serving = action.payload.item;
+
+    let thisId = action.payload.id;
+
+    let newRecipes = [...state.recipes];
+    let index = newRecipes.findIndex((i) => i.id === thisId);
+
+    let thisRecipe = newRecipes[index];
+    thisRecipe = { ...thisRecipe, serving };
+
+    newRecipes[index] = thisRecipe;
+    return { ...state, recipes: newRecipes };
+  }
+
   if (action.type === ADD_INGREDIENTS) {
-    let serving = action.payload.item2;
     let ingredients = action.payload.item;
 
     let thisId = action.payload.id;
@@ -89,7 +115,7 @@ const reducer = (state = initialState, action) => {
     let index = newRecipes.findIndex((i) => i.id === thisId);
 
     let thisRecipe = newRecipes[index];
-    thisRecipe = { ...thisRecipe, ingredients, serving };
+    thisRecipe = { ...thisRecipe, ingredients };
 
     newRecipes[index] = thisRecipe;
     return { ...state, recipes: newRecipes };

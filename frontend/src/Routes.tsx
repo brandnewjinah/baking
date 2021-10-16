@@ -10,6 +10,7 @@ import Design from "./pages/Design";
 //import pages
 import Home from "./pages/Home";
 import New from "./pages/recipes/New";
+import NewServing from "./pages/recipes/NewServingSize";
 import NewIngredients from "./pages/recipes/NewIngredients";
 import NewDirections from "./pages/recipes/NewDirections";
 import Recipes from "./pages/recipes/Recipes";
@@ -26,6 +27,11 @@ const Routes = () => {
           <Route exact path="/recipes/add" component={New} />
 
           <Route exact path="/recipe/:recipeId" component={RecipeDetail} />
+          <Route
+            exact
+            path="/recipes/:recipeId/serving"
+            component={NewServing}
+          />
           <Route
             exact
             path="/recipes/:recipeId/ingredients"

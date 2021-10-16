@@ -1,41 +1,46 @@
 import React, { FC } from "react";
-import { defaultTheme } from "./token";
-
-//import libraries
 import styled from "styled-components";
 
+//import token
+import { defaultTheme, neutral, primaryColor } from "./token";
+
 export interface Props {
-  color?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
   disabled?: boolean;
   error?: boolean;
   fullwidth?: boolean;
   icon?: boolean;
   label?: string;
   shape?: "pill" | "rounded" | "sharp";
+  size?: "small";
   spacing?: string;
   textColor?: string;
   thin?: boolean;
-
   handleClick?: () => void;
 }
 
 export const FilledButton: FC<Props> = ({
-  color,
+  children,
+  primaryColor,
+  secondaryColor,
   disabled,
   error,
   fullwidth,
   icon,
   label,
+  size,
   shape,
   spacing,
   handleClick,
-  children,
 }) => {
   return (
     <FilledContainer
       aria-label={label}
       role="button"
-      color={color}
+      primaryColor={primaryColor}
+      secondaryColor={secondaryColor}
+      size={size}
       shape={shape}
       disabled={disabled}
       fullwidth={fullwidth}
@@ -52,14 +57,14 @@ export const FilledButton: FC<Props> = ({
 
 export const TextButton: FC<Props> = ({
   label,
-  color,
+  primaryColor,
   disabled,
   handleClick,
 }) => {
   return (
     <TextButtonContainer
       aria-label={label}
-      color={color}
+      primaryColor={primaryColor}
       disabled={disabled}
       onClick={handleClick}
     >
@@ -70,7 +75,7 @@ export const TextButton: FC<Props> = ({
 
 export const OutlinedButton: FC<Props> = ({
   children,
-  color,
+  primaryColor,
   disabled,
   error,
   fullwidth,
@@ -84,7 +89,7 @@ export const OutlinedButton: FC<Props> = ({
   return (
     <OutlinedContainer
       aria-label={label}
-      color={color}
+      primaryColor={primaryColor}
       disabled={disabled && true}
       error={error}
       fullwidth={fullwidth}
@@ -103,7 +108,8 @@ export const OutlinedButton: FC<Props> = ({
 
 export const IconButton: FC<Props> = ({
   children,
-  color,
+  primaryColor,
+  secondaryColor,
   disabled,
   label,
   handleClick,
@@ -112,7 +118,8 @@ export const IconButton: FC<Props> = ({
     <IconContainer
       aria-label={label}
       title={label}
-      color={color}
+      primaryColor={primaryColor}
+      secondaryColor={secondaryColor}
       disabled={disabled && true}
       onClick={handleClick}
     >
@@ -137,9 +144,11 @@ const Button = styled.button<Props>`
 `;
 
 const FilledContainer = styled(Button)<Props>`
-  background-color: ${(props) => props.color};
+  font-size: ${(props) => (props.size === "small" ? ".875rem" : "1rem")};
+  background-color: ${(props) =>
+    props.secondaryColor ? props.secondaryColor : props.primaryColor};
   border: none;
-  color: #fff;
+  color: ${(props) => (props.secondaryColor ? props.primaryColor : `#fff`)};
   cursor: pointer;
 
   .spacing {
@@ -162,12 +171,12 @@ const FilledContainer = styled(Button)<Props>`
 const OutlinedContainer = styled(Button)<Props>`
   background-color: ${(props) =>
     props.error ? `rgba(255, 0, 0, 0.05)` : `transparent`};
-  font-weight: ${(props) => (props.thin ? 400 : 500)};
+  font-weight: ${(props) => (props.thin ? 400 : 600)};
   border-style: solid;
-  border-color: ${(props) => (props.error ? `red` : props.color)};
-  /* border-color: ${(props) => props.color}; */
+  border-color: ${(props) => (props.error ? `red` : props.primaryColor)};
+  /* border-color: ${(props) => props.primaryColor}; */
   border-width: ${(props) => (props.thin ? `1px` : `2px`)};
-  color: ${(props) => (props.textColor ? props.textColor : props.color)};
+  color: ${(props) => (props.textColor ? props.textColor : props.primaryColor)};
 
   &:hover {
     opacity: 0.65;
@@ -186,10 +195,10 @@ const OutlinedContainer = styled(Button)<Props>`
 const TextButtonContainer = styled.button<Props>`
   font-weight: 600;
   background: transparent;
-  color: ${(props) => props.color};
+  color: ${(props) => props.primaryColor};
   border: 0;
   border-bottom: ${(props) =>
-    props.color ? `2px solid ${props.color}` : `2px solid black`};
+    props.primaryColor ? `2px solid ${props.primaryColor}` : `2px solid black`};
   transition: 0.2s;
   cursor: pointer;
 
@@ -222,8 +231,13 @@ const IconContainer = styled.button<Props>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.color};
-  padding: 0.75em;
+  background-color: ${(props) =>
+    props.primaryColor
+      ? props.primaryColor
+      : props.secondaryColor
+      ? props.secondaryColor
+      : neutral[100]};
+  padding: 0.5em;
   border-radius: 100%;
   border: none;
   outline: transparent;
