@@ -216,8 +216,8 @@ const New = (props) => {
           <FilledButton
             label={location.pathname.includes("/add") ? "Next" : "Edit"}
             fullwidth
-            color={defaultTheme.secondaryColor}
-            shape="rounded"
+            primaryColor={defaultTheme.secondaryColor}
+            shape="pill"
             spacing={spacing.xxxxs}
             handleClick={
               location.pathname.includes("/add") ? handleNext : handleEdit

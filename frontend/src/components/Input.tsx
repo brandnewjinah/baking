@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useState } from "react";
 //import styles and assets
 import styled, { css } from "styled-components";
 import { Eye, EyeOff } from "../assets/Icons";
-import { neutral, typeScale, spacing } from "./token";
+import { neutral, typeScale, spacing, secondaryFont } from "./token";
 
 export interface Props {
   label?: string;
@@ -20,6 +20,7 @@ export interface Props {
   align?: string;
   autofocus?: boolean;
   disabled?: boolean;
+  rows?: number;
   inputmode?: "url" | "tel" | "email" | "numeric" | undefined;
   maxLength?: number;
   suffix?: boolean;
@@ -33,6 +34,7 @@ type StyleProps = {
   shape?: string | undefined;
   margin?: string | undefined;
   align?: string | undefined;
+  small?: boolean;
 };
 
 export const Input: FC<Props> = ({
@@ -78,6 +80,7 @@ export const Input: FC<Props> = ({
         {suffix && <div className="suffix">{suffix}</div>}
         <InputTag
           placeholder={placeholder}
+          small={small}
           shape={shape}
           align={align}
           id={id ? id : name}
@@ -164,6 +167,7 @@ export const TextArea: FC<Props> = ({
   error,
   small,
   shape,
+  rows,
   margin,
   placeholder,
   disabled,
@@ -186,6 +190,7 @@ export const TextArea: FC<Props> = ({
           align={align}
           id={id ? id : name}
           className={`${small && "small"} ${error && "error"}`}
+          rows={rows}
           name={name}
           value={value}
           disabled={disabled}
@@ -267,7 +272,7 @@ const InputTag = styled.input<StyleProps>`
 
   ::placeholder,
   ::-webkit-input-placeholder {
-    font-size: 0.925rem;
+    font-size: ${(props) => (props.small ? "0.875rem" : "0.925rem")};
     color: ${neutral[200]};
   }
 `;
@@ -357,6 +362,17 @@ const FloatingContainer = styled.div<StyleProps>`
   }
 `;
 
+// const TextAreaTag = styled.textarea<StyleProps>`
+//   ${Global}
+// `;
+
 const TextAreaTag = styled.textarea<StyleProps>`
   ${Global}
+
+  &::placeholder,
+  ::-webkit-input-placeholder {
+    font-family: ${secondaryFont};
+    font-size: ${(props) => (props.small ? "0.875rem" : "0.925rem")};
+    color: ${neutral[200]};
+  }
 `;

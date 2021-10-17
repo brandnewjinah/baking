@@ -26,7 +26,6 @@ const Container = styled.div`
 
   .title {
     font-family: ${primaryFont};
-    font-weight: 800;
     color: ${neutral[600]};
     margin: ${spacing.xxxs} 0;
   }

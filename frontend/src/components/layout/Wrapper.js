@@ -31,8 +31,34 @@ const Global = css`
     ${Flex}
   }
 
+  .flexEnd {
+    ${Flex}
+    justify-content: flex-end;
+  }
+
+  .flexAlignTop {
+    ${Flex}
+    align-items: flex-start;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .upper {
+    text-transform: uppercase;
+  }
+
+  .half {
+    flex: 0 0 4.5%;
+  }
+
   .one {
     flex: 0 0 9.5%;
+  }
+
+  .two {
+    flex: 0 0 19.5%;
   }
 
   .four {
@@ -54,41 +80,35 @@ const Global = css`
   .six {
     flex: 0 0 59.5%;
   }
+
+  .sevenhalf {
+    flex: 0 0 74.5%;
+  }
+
+  .nine {
+    flex: 0 0 89.5%;
+  }
+
+  .vspacexxs {
+    padding-bottom: ${spacing.xxs};
+  }
+
+  .vspacexs {
+    padding-bottom: ${spacing.xs};
+  }
+
+  .vspaces {
+    padding: ${spacing.xs} 0;
+  }
 `;
 
 const Container = styled.div`
   ${Global}
   padding: 2rem 1.35rem;
 
-  h6 {
-    color: ${neutral[400]};
-  }
-
   .p3 {
     letter-spacing: 0.03rem;
     color: ${neutral[400]};
-  }
-
-  .center {
-    text-align: center;
-  }
-
-  .upper {
-    text-transform: uppercase;
-  }
-
-  .vspace {
-    padding: ${spacing.xxs} 0;
-  }
-
-  .half {
-    flex: 0 0 4.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .two {
-    flex: 0 0 19.5%;
-    padding: ${spacing.xxs} 0;
   }
 
   .three {
@@ -98,11 +118,6 @@ const Container = styled.div`
 
   .seven {
     flex: 0 0 69.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .sevenhalf {
-    flex: 0 0 74.5%;
     padding: ${spacing.xxs} 0;
   }
 `;

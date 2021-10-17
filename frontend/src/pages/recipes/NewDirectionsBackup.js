@@ -8,17 +8,15 @@ import Heading from "../../components/layout/Heading";
 import {
   Section,
   Article,
-  Div,
   BtnContainer,
 } from "../../components/layout/Containers";
 
 //import componts
-import { Input, TextArea } from "../../components/Input";
-import { FilledButton, TextButton, IconButton } from "../../components/Button";
+import { Input, TextArea, Floating } from "../../components/Input";
+import { FilledButton, TextButton } from "../../components/Button";
 
 //import token
 import { spacing, neutral, defaultTheme } from "../../components/token";
-import { Close } from "../../assets/Icons";
 
 //redux
 import { connect } from "react-redux";
@@ -64,11 +62,23 @@ const NewDirections = (props) => {
     if (input.name === "timestamp") {
       let replaceTime = input.value.replace(/\:/g, "");
 
-      if (replaceTime.length >= 3 && replaceTime.length < 5) {
-        let min = replaceTime.substring(0, 2);
-        let sec = replaceTime.substring(2, 4);
+      if (replaceTime.length === 2) {
+        let min = "00";
+        let sec = replaceTime;
         input.value = min + ":" + sec;
       }
+
+      if (replaceTime.length === 1) {
+        let min = "00";
+        let sec = `0${replaceTime}`;
+        input.value = min + ":" + sec;
+      }
+
+      // if (replaceTime.length >= 3 && replaceTime.length < 5) {
+      //   let min = replaceTime.substring(0, 2);
+      //   let sec = replaceTime.substring(2, 4);
+      //   input.value = min + ":" + sec;
+      // }
       currentItem.timestamp = input.value;
     }
 
@@ -154,71 +164,47 @@ const NewDirections = (props) => {
 
       <Section padding={`${spacing.xl} 0`}>
         <h5 className="vspacexs">Directions</h5>
-        {/* <p className="p3">
+        <p className="p3">
           Add a timestamp to jump to straight to a corresponding place in a
           video
-        </p> */}
+        </p>
         {directions.map((item, idx) => (
-          <Article key={idx} padding={`0 0 ${spacing.l}`}>
+          <Article key={idx}>
             <div className="flex">
-              <div className="one center p3">{idx + 1}</div>
-              <div className="nine flex">
-                <div className="fourhalf">
-                  <Input
-                    id={`${item.id}?timestamp`}
-                    name="timestamp"
-                    suffix="minute"
-                    maxLength={2}
-                    type="number"
-                    inputmode="decimal"
-                    shape="underline"
-                    value={item.timestamp}
-                    handleChange={handleInput}
-                  />
-                </div>
-                <div className="fourhalf">
-                  <Input
-                    id={`${item.id}?timestamp`}
-                    name="timestamp"
-                    suffix="seconds"
-                    maxLength={2}
-                    type="number"
-                    inputmode="decimal"
-                    shape="underline"
-                    value={item.timestamp}
-                    handleChange={handleInput}
-                  />
-                </div>
+              <div className="half p3">{idx + 1}</div>
+              <div className="two">
+                <Input
+                  id={`${item.id}?timestamp`}
+                  name="timestamp"
+                  placeholder="mm:ss"
+                  align="right"
+                  maxLength={5}
+                  value={item.timestamp}
+                  handleChange={handleInput}
+                />
               </div>
-            </div>
 
-            <div className="flexAlignTop">
-              <div className="one flexCenter">
-                {idx === 0 ? (
-                  <div></div>
-                ) : (
-                  <IconButton handleClick={() => handleDirDelete(item.id)}>
-                    <Close
-                      width={10}
-                      height={10}
-                      color={neutral[300]}
-                      stroke={3}
-                    />
-                  </IconButton>
-                )}
-              </div>
-              <Div className="nine" padding={`${spacing.xl} 0`}>
+              <div className="sevenhalf">
                 <TextArea
                   id={`${item.id}?direction`}
                   name="direction"
-                  placeholder="temperature"
-                  shape="underline"
+                  placeholder="Directions"
                   rows={4}
                   value={item.direction}
                   handleChange={handleInput}
                 />
-              </Div>
+              </div>
             </div>
+            {idx === 0 ? (
+              <div></div>
+            ) : (
+              <div
+                className="helper center vspace"
+                onClick={() => handleDirDelete(item.id)}
+              >
+                delete
+              </div>
+            )}
           </Article>
         ))}
         <Add>
@@ -244,6 +230,27 @@ const Flex = css`
   align-items: center;
   justify-content: center;
 `;
+
+// const Section = styled.section`
+//   border-bottom: 1px solid ${neutral[100]};
+//   padding: ${spacing.l} 0;
+
+//   header {
+//     padding-bottom: ${spacing.xs};
+//   }
+
+//   .p3 {
+//     letter-spacing: 0.03rem;
+//     color: ${neutral[400]};
+//   }
+// `;
+
+// const Article = styled.article`
+//   .flex {
+//     ${Flex}
+//     justify-content: space-between;
+//   }
+// `;
 
 const Add = styled.div`
   ${Flex}

@@ -12,12 +12,16 @@ type StyleProps = {
   padding?: string | undefined;
 };
 
-export const Section: FC<Props> = ({ children }) => {
-  return <SectionContainer>{children}</SectionContainer>;
+export const Section: FC<Props> = ({ children, padding }) => {
+  return <SectionContainer padding={padding}>{children}</SectionContainer>;
 };
 
 export const Article: FC<Props> = ({ children, padding }) => {
   return <ArticleContainer padding={padding}>{children}</ArticleContainer>;
+};
+
+export const Div: FC<Props> = ({ children, padding }) => {
+  return <DivContainer padding={padding}>{children}</DivContainer>;
 };
 
 export const Select: FC<Props> = ({ children }) => {
@@ -28,15 +32,22 @@ export const BtnContainer: FC<Props> = ({ children }) => {
   return <ButtonContainer>{children}</ButtonContainer>;
 };
 
-const SectionContainer = styled.section`
+const SectionContainer = styled.section<StyleProps>`
   width: 100%;
+  padding: ${(props) => props.padding};
 
   .background {
-    background-color: ${neutral[100]};
+    /* background-color: ${neutral[100]}; */
+    padding: ${spacing.xxs};
   }
 `;
 
 const ArticleContainer = styled.article<StyleProps>`
+  width: 100%;
+  padding: ${(props) => props.padding};
+`;
+
+const DivContainer = styled.div<StyleProps>`
   width: 100%;
   padding: ${(props) => props.padding};
 `;

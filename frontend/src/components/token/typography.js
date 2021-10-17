@@ -20,7 +20,7 @@ export const typeScaleMobile = {
   header2: "1.5rem",
   header3: "1.625rem",
   header4: "1.45rem",
-  header5: "1.2rem",
+  header5: "1rem",
   header6: "0.725rem",
   body: "1rem",
   sbody: ".9125rem",

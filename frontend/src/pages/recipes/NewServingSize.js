@@ -65,8 +65,8 @@ const NewIngredients = (props) => {
       <BtnContainer>
         <FilledButton
           label="Next"
-          color={defaultTheme.secondaryColor}
-          shape="rounded"
+          primaryColor={defaultTheme.secondaryColor}
+          shape="pill"
           fullwidth
           handleClick={handleNext}
         />

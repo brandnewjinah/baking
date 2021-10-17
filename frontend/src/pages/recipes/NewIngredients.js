@@ -72,6 +72,20 @@ const NewIngredients = (props) => {
     return thisGroup;
   };
 
+  //add group name
+  const handleGroup = ({ currentTarget: input }, group) => {
+    let thisGroup = findGroup(group);
+
+    //set group name
+    thisGroup = {
+      ...thisGroup,
+      group: input.value,
+    };
+
+    newIngredients[thisGroup.index] = thisGroup;
+    setIngredients(newIngredients);
+  };
+
   //select ingredient
   const handleSelected = (group, ingredient, selected) => {
     let thisGroup = findGroup(group);
@@ -204,6 +218,7 @@ const NewIngredients = (props) => {
     }),
     dropdownIndicator: (styles) => ({
       ...styles,
+      color: primaryColor.yellow,
       padding: "4px",
     }),
   };
@@ -213,7 +228,7 @@ const NewIngredients = (props) => {
       <Wrapper>
         <Heading
           title="Add ingredients"
-          subtitle="Group ingredients?"
+          subtitle="Group ingredients? add title lorem "
         ></Heading>
       </Wrapper>
       <WrapperFull>
@@ -222,7 +237,13 @@ const NewIngredients = (props) => {
             {ingredients.map((group, idx) => (
               <Group>
                 <div className="nameContainer">
-                  <Floating label="Group name" name="amount" />
+                  <Floating
+                    label="Group title"
+                    name="amount"
+                    handleChange={(e) => {
+                      handleGroup(e, group.id);
+                    }}
+                  />
                 </div>
                 {group.items.map((item, idx) => (
                   <Article key={idx} padding={`0 0 ${spacing.l}`}>
@@ -251,6 +272,7 @@ const NewIngredients = (props) => {
                           <Input
                             id={item.id}
                             placeholder="Amount"
+                            small={true}
                             name="amount"
                             type="number"
                             inputmode="decimal"
@@ -287,7 +309,7 @@ const NewIngredients = (props) => {
                       {idx === 0 ? (
                         <div className="one"></div>
                       ) : (
-                        <div className="one flexCenter">
+                        <div className="one flexEnd">
                           <IconButton
                             handleClick={() =>
                               handleDeleteItem(group.id, item.id)
@@ -296,7 +318,7 @@ const NewIngredients = (props) => {
                             <Close
                               width={10}
                               height={10}
-                              color={primaryColor.yellow}
+                              color={neutral[300]}
                               stroke={3}
                             />
                           </IconButton>
@@ -305,22 +327,30 @@ const NewIngredients = (props) => {
                     </div>
                   </Article>
                 ))}
-                <Add>
-                  <TextButton
-                    label="Add Item"
-                    primaryColor={primaryColor.yellow}
-                    handleClick={() => handleAddItem(group.id)}
-                  />
-                </Add>
+
                 {idx === 0 ? (
-                  <div></div>
-                ) : (
                   <Add>
                     <TextButton
-                      label="Delete Group"
-                      handleClick={() => handleDeleteGroup(group.id)}
+                      label="Add Item"
+                      primaryColor={primaryColor.yellow}
+                      handleClick={() => handleAddItem(group.id)}
                     />
                   </Add>
+                ) : (
+                  <div className="flex">
+                    <Add>
+                      <TextButton
+                        label="Add Item"
+                        primaryColor={primaryColor.yellow}
+                        handleClick={() => handleAddItem(group.id)}
+                      />
+                    </Add>
+                    <TextButton
+                      label="Delete Group"
+                      primaryColor={neutral[300]}
+                      handleClick={() => handleDeleteGroup(group.id)}
+                    />
+                  </div>
                 )}
               </Group>
             ))}
@@ -336,7 +366,6 @@ const NewIngredients = (props) => {
             handleClick={handleAddGroup}
           />
         </Add>
-
         <Wrapper>
           <BtnContainer>
             <FilledButton
@@ -354,9 +383,10 @@ const NewIngredients = (props) => {
 };
 
 const Group = styled.article`
-  margin-bottom: ${spacing.xl};
-  padding: 0 1.35rem;
-  background-color: white;
+  padding: 1.35rem;
+  border: 1px solid ${neutral[100]};
+  border-radius: ${spacing.xl};
+  margin-bottom: ${spacing.xxs};
 
   .nameContainer {
     margin-bottom: ${spacing.xl};
@@ -367,7 +397,7 @@ const Add = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.m} 0;
+  padding: ${spacing.xl} 0;
 `;
 
 const mapStateToProps = (state) => {

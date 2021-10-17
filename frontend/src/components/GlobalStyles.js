@@ -51,32 +51,32 @@ const GlobalStyle = createGlobalStyle`
 
     @media ${breakpoint.m} {
     h1 {
-        font-weight: 600;
+        font-weight: 800;
         font-size: ${typeScaleMobile.header1};
         line-height: ${typeScaleMobile.header1};
     }
     h2 {
-        font-weight: 500;
+        font-weight: 800;
         font-size: ${typeScaleMobile.header2};
         line-height: ${typeScaleMobile.header2};
     }
     h3 {
-        font-weight: 600;
+        font-weight: 700;
         font-size: ${typeScaleMobile.header3};
         line-height: ${typeScaleMobile.header3};
     }
     h4 {
-        font-weight: 500;
+        font-weight: 700;
         font-size: ${typeScaleMobile.header4};
         line-height: ${typeScaleMobile.header4};
     }
     h5 {
-        font-weight: 500;
+        font-weight: 700;
         font-size: ${typeScaleMobile.header5};
         line-height: ${typeScaleMobile.header5};
     }
     h6 {
-        font-weight: 500;
+        font-weight: 600;
         font-size: ${typeScaleMobile.header6};
         line-height: ${typeScaleMobile.header6};
         letter-spacing: 0.03rem;
