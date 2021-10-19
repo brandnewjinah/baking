@@ -133,7 +133,9 @@ const Button = styled.button<Props>`
   width: ${(props) => (props.fullwidth ? "100%" : null)};
   border-radius: ${(props) =>
     props.shape === "pill" ? "2em" : props.shape === "rounded" ? ".5em" : 0};
-  padding: 0.875em 1.5em;
+
+  padding: ${(props) =>
+    props.size === "small" ? ".25em .5em" : "0.875em 1.5em"};
   transition: opacity 0.3s ease-out;
   cursor: pointer;
 

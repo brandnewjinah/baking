@@ -76,7 +76,7 @@ const GlobalStyle = createGlobalStyle`
         line-height: ${typeScaleMobile.header5};
     }
     h6 {
-        font-weight: 600;
+        font-weight: 500;
         font-size: ${typeScaleMobile.header6};
         line-height: ${typeScaleMobile.header6};
         letter-spacing: 0.03rem;

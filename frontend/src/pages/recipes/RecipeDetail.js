@@ -2,24 +2,24 @@ import React, { useRef, useState } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
 import ReactPlayer from "react-player";
 import "./styles.css";
-import { Modal } from "react-responsive-modal";
 import styled from "styled-components";
 
+//import layout components
+import { Wrapper, WrapperFull } from "../../components/layout/Wrapper";
+import Heading from "../../components/layout/Heading";
+import {
+  Divider,
+  Section,
+  Article,
+  Div,
+  Header,
+} from "../../components/layout/Containers";
+
 //import components
-import { Input } from "../../components/Input";
-import { TextButton } from "../../components/Button";
+import { FilledButton, TextButton } from "../../components/Button";
 
 //import token
-import {
-  spacing,
-  neutral,
-  typeScale,
-  primaryColor,
-  tertiaryFont,
-} from "../../components/token";
-
-//import assets
-import { Pencil } from "../../assets/Icons";
+import { spacing, primaryColor } from "../../components/token";
 
 //redux
 import { connect } from "react-redux";
@@ -35,247 +35,171 @@ const RecipeDetail = (props) => {
     (item) => item.id === parseInt(recipeId)
   );
 
-  //this ingredients
-  const [ingredients, setIngredients] = useState([...thisRecipe.ingredients]);
-
   //react player
   const player = useRef(null);
+  const [resume, setResume] = useState(false);
 
-  const handleTimestamp = (time) => {
-    const times = time.split(":");
-    const MM = parseInt(times[0]);
-    const SS = parseInt(times[1]);
+  const handleTimestamp = (min, sec) => {
+    const MM = parseInt(min);
+    const SS = parseInt(sec);
 
     const seconds = MM * 60 + SS;
 
     if (player.current !== null) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       player.current.seekTo(seconds);
     }
+    setResume(true);
   };
 
-  //modal
-  const [open, setOpen] = useState(false);
-  const toggleModal = () => setOpen(!open);
-  const [value, setValue] = useState("");
-
-  const handleChange = ({ currentTarget: input }) => {
-    let id = parseInt(input.id);
-    let reference = input.value;
-    let newIngredients = [...ingredients];
-    let index = newIngredients.findIndex((i) => i.id === parseInt(id));
-    let currentItem = { ...newIngredients[index] };
-    currentItem[input.name] = reference;
-    newIngredients[index] = currentItem;
-    setIngredients(newIngredients);
-
-    const filtered = newIngredients.filter((item) => item.id != id);
-    filtered.map((item) => (item.amount = item.amount * reference));
-
-    let updatedIngredients = [...filtered, currentItem];
-
-    setIngredients(updatedIngredients);
+  //edit recipe
+  const [EditMode, setEditMode] = useState(false);
+  const handleEdit = (id) => {
+    history.push(`/recipe/edit/${recipeId}/${id}`);
+    // props.deleteRecipe(recipeId); //add to redux
+    // history.push("/recipes");
   };
 
-  //delete recipe
-  const handleDelete = () => {
-    props.deleteRecipe(recipeId); //add to redux
-    history.push("/recipes");
-  };
+  const handleDelete = () => {};
 
   return (
     <>
-      {!thisRecipe ? (
-        <Wrapper>no</Wrapper>
-      ) : (
-        <Wrapper>
-          <PlayerContainer>
-            <ReactPlayer
-              ref={player}
-              url={thisRecipe.url}
-              className="react-player"
-              controls
-              playing
-              width="100%"
-              height="100%"
-            />
-          </PlayerContainer>
-          <Header>
-            <p className="helper category">{thisRecipe.category}</p>
-            <h1 className="title">{thisRecipe.name}</h1>
-            {thisRecipe.description && (
-              <p className="sbody">{thisRecipe.description}</p>
-            )}
-            <p className="helper">by {thisRecipe.author}</p>
-            {/* <p className="helper">
-              <Link to={`/recipe/edit/${recipeId}`}>edit</Link>
-            </p> */}
-          </Header>
-          <Section>
-            <div className="serving">
-              <Element>
-                <div className="helper vspace">Temp</div>
-                <div className="sbody">350°F</div>
-              </Element>
-              <Element>
-                <div className="helper vspace">Makes</div>
-                <div className="sbody">15 x 15 x 8</div>
-              </Element>
-              <Element>
-                <div className="helper vspace">Makes</div>
-                <div className="sbody">15 x 15 x 8</div>
-              </Element>
-            </div>
-          </Section>
-          <Container>
-            <Section>
-              <Article>
-                <Flex>
-                  <div className="flex">
-                    <h5>Ingredients</h5>
-                    <Link to={`/recipe/edit/${recipeId}/ingredients`}>
-                      <div>
-                        <Pencil
-                          width={16}
-                          height={16}
-                          color="#000"
-                          stroke={2}
-                        />
-                      </div>
-                    </Link>
-                  </div>
-                  <div className="txtBtn" onClick={toggleModal}>
-                    adjust
-                  </div>
+      <WrapperFull>
+        <PlayerContainer>
+          <ReactPlayer
+            ref={player}
+            url={thisRecipe.youtube}
+            className="react-player"
+            controls
+            playing={resume}
+            width="100%"
+            height="100%"
+          />
+        </PlayerContainer>
+      </WrapperFull>
+      <Wrapper>
+        <Heading
+          kicker={thisRecipe.category.name}
+          title={thisRecipe.name}
+          subtitle={thisRecipe.description}
+          helper={thisRecipe.author.name}
+        />
+        {EditMode && (
+          <TextButton
+            label="Edit"
+            primaryColor={primaryColor.yellow}
+            handleClick={() => handleEdit("info")}
+          />
+        )}
+        <Divider />
 
-                  <Modal open={open} onClose={toggleModal} center>
-                    <h6>Adjust</h6>
-                    {ingredients.map((item, idx) => (
-                      <Item key={idx}>
-                        <div className="left">
-                          <Input
-                            id={item.id}
-                            name="amount"
-                            value={item.amount}
-                            handleChange={handleChange}
-                          />
-                        </div>
-                        <div>{item.ingredient}</div>
-                      </Item>
-                    ))}
-                  </Modal>
-                </Flex>
-                {ingredients.map((item, idx) => (
-                  <Item key={idx}>
-                    <div className="left">{`${item.amount}${item.unit}`}</div>
-                    <div>{item.ingredient}</div>
-                  </Item>
-                ))}
-              </Article>
-              <Article>
-                <h5>Directions</h5>
-                {thisRecipe.directions.map((item, idx) => (
-                  <Item key={idx}>
-                    <div
-                      className="left"
-                      onClick={() => handleTimestamp(item.timestamp)}
-                    >
-                      {item.timestamp}
-                    </div>
-                    <div>
-                      {/* <span>{`${idx + 1}. `}</span> */}
-                      <span>{item.direction}</span>
-                    </div>
-                  </Item>
-                ))}
-              </Article>
-            </Section>
-            <Section>
-              <Link to={`/recipes/edit/${recipeId}/directions`}>edit</Link>
-            </Section>
-            <Section>
-              <TextButton
-                label="Delete"
-                color="#d35400"
-                handleClick={handleDelete}
-              />
-            </Section>
-          </Container>
-        </Wrapper>
-      )}
+        <Section padding={`${spacing.xl} 0`}>
+          <h5 className="vspacexs">Basic</h5>
+          {thisRecipe.details.map((item, idx) => (
+            <Div className="flex" padding={`${spacing.xxxxs} 0`}>
+              <div className="three">
+                <p className="p2 capitalize">{item.name}</p>
+              </div>
+              <div className="seven">
+                <p className="p2">
+                  <span>{item.value}</span>
+                  {item.unit && <span> {item.unit}</span>}
+                </p>
+              </div>
+            </Div>
+          ))}
+
+          {EditMode && (
+            <TextButton
+              label="Edit"
+              primaryColor={primaryColor.yellow}
+              handleClick={() => handleEdit("details")}
+            />
+          )}
+        </Section>
+        <Divider />
+
+        <Section padding={`${spacing.xl} 0`}>
+          <h5 className="vspacexs">Ingredients</h5>
+          {thisRecipe.ingredients.map((group, idx) => (
+            <Article padding={`0 0 ${spacing.l}`}>
+              <Header className="p3 bold" padding={`${spacing.xxs} 0`}>
+                {group.group}
+              </Header>
+              {group.items.map((item, idx) => (
+                <Div className="flex" padding={`${spacing.xxxxs} 0`}>
+                  <div className="six">
+                    <p className="p2">{item.ingredient}</p>
+                  </div>
+                  <div className="four">
+                    <p className="p2">{`${item.amount}${item.unit}`}</p>
+                  </div>
+                </Div>
+              ))}
+            </Article>
+          ))}
+          {EditMode && (
+            <TextButton
+              label="Edit"
+              primaryColor={primaryColor.yellow}
+              handleClick={() => handleEdit("ingredients")}
+            />
+          )}
+        </Section>
+        <Divider />
+        <Section padding={`${spacing.xl} 0`}>
+          <h5 className="vspacexs">Directions</h5>
+          {thisRecipe.directions.map((item, idx) => (
+            <Div className="p2" padding={`0 0 ${spacing.l}`}>
+              <span className="bold">{`${item.id}. `}</span>
+              <span>{item.direction}</span>
+              <span>
+                <FilledButton
+                  label={`${item.minutes}:${item.seconds}`}
+                  size="small"
+                  shape="rounded"
+                  primaryColor={primaryColor.yellow}
+                  secondaryColor={primaryColor.lightyellow}
+                  handleClick={() =>
+                    handleTimestamp(item.minutes, item.seconds)
+                  }
+                />
+              </span>
+            </Div>
+          ))}
+          {EditMode && (
+            <TextButton
+              label="Edit"
+              primaryColor={primaryColor.yellow}
+              handleClick={() => handleEdit("directions")}
+            />
+          )}
+        </Section>
+        <Divider />
+        {EditMode ? (
+          <>
+            <TextButton
+              label="Cancel"
+              primaryColor={primaryColor.yellow}
+              handleClick={() => setEditMode(!EditMode)}
+            />
+            <TextButton
+              label="Delete"
+              primaryColor={primaryColor.yellow}
+              handleClick={handleDelete}
+            />
+          </>
+        ) : (
+          <TextButton
+            label="Edit"
+            primaryColor={primaryColor.yellow}
+            handleClick={() => setEditMode(!EditMode)}
+          />
+        )}
+      </Wrapper>
     </>
   );
 };
-
-const Flex = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-
-  .helper {
-    font-size: ${typeScale.helper};
-    font-weight: 500;
-    letter-spacing: 0.03rem;
-    color: ${neutral[400]};
-  }
-
-  .sbody {
-    font-size: ${typeScale.sbody};
-    color: ${neutral[500]};
-    letter-spacing: 0.025rem;
-    margin-bottom: ${spacing.xxs};
-  }
-
-  .vspace {
-    margin-bottom: ${spacing.xxxs};
-  }
-`;
-
-const Header = styled.header`
-  text-align: center;
-  padding: ${spacing.xl};
-
-  .category {
-    text-transform: uppercase;
-  }
-
-  .title {
-    font-family: ${tertiaryFont};
-    color: ${neutral[700]};
-    margin: ${spacing.xxs} 0;
-  }
-`;
-
-const Section = styled.section`
-  width: 100%;
-  padding: ${spacing.xl} 0;
-
-  .overline {
-    text-transform: uppercase;
-    font-size: ${typeScale.helper};
-    font-weight: 500;
-    letter-spacing: 0.0125rem;
-    color: ${primaryColor.gold};
-    border-bottom: 1px solid ${primaryColor.gold};
-    display: inline-block;
-    line-height: 2;
-  }
-
-  .serving {
-    display: flex;
-    justify-content: center;
-    background-color: ${neutral[10]};
-  }
-`;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 0 ${spacing.xxl};
-`;
 
 const PlayerContainer = styled.section`
   position: relative;
@@ -288,59 +212,13 @@ const PlayerContainer = styled.section`
   }
 `;
 
-const Element = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1em;
-`;
-
-const Article = styled.article`
-  padding: ${spacing.l} 0;
-
-  h5 {
-    font-family: ${tertiaryFont};
-    font-weight: 600;
-    color: ${neutral[600]};
-  }
-
-  .txtBtn {
-    font-size: ${typeScale.helper};
-    cursor: pointer;
-  }
-
-  .react-responsive-modal-modal {
-    width: 100%;
-    height: 100%;
-  }
-
-  .flex {
-    display: flex;
-    align-items: center;
-  }
-`;
-
-const Item = styled.div`
-  display: flex;
-  font-size: ${typeScale.sbody};
-  border-bottom: 1px solid ${neutral[100]};
-  padding: ${spacing.xxs} 0;
-
-  .left {
-    flex: 0 0 20%;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
 const mapStateToProps = (state) => {
   return {
     recipes: state.recipes.recipes,
   };
 };
 
-export default connect(mapStateToProps, { addDirections, deleteRecipe })(
-  RecipeDetail
-);
+export default connect(mapStateToProps, {
+  addDirections,
+  deleteRecipe,
+})(RecipeDetail);

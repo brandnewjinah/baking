@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import styled from "styled-components";
 
 //import layout components
 import { Wrapper } from "../../components/layout/Wrapper";
@@ -9,16 +8,17 @@ import {
   Section,
   Article,
   Select,
+  Div,
   BtnContainer,
 } from "../../components/layout/Containers";
 
 //import components
 import { Floating } from "../../components/Input";
-import { FilledButton } from "../../components/Button";
+import { FilledButton, TextButton } from "../../components/Button";
 import ResSelect from "../../components/ResSelect";
 
 //import token
-import { spacing, defaultTheme } from "../../components/token";
+import { spacing, defaultTheme, primaryColor } from "../../components/token";
 
 //local data
 import { categoryOptions, authorOptions } from "../../data/recipeData";
@@ -32,6 +32,19 @@ const New = (props) => {
   let location = useLocation();
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
+  const editMode = location.pathname.includes("/edit");
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    if (editMode) {
+      //get recipe info from redux store
+      const currentItem = props.recipes.find((r) => r.id === recipeId);
+      setRecipe(currentItem);
+    }
+  };
 
   //this recipe
   const [recipe, setRecipe] = useState({
@@ -74,9 +87,6 @@ const New = (props) => {
     if (recipe.name === "") {
       errors.name = "Name is required";
     }
-    // if (recipe.category === "") {
-    //   errors.category = "Category is required";
-    // }
     if (Object.keys(recipe.category).length === 0) {
       errors.category = "Category is required";
     }
@@ -100,27 +110,17 @@ const New = (props) => {
   //Edit Button
   const handleEdit = () => {
     props.editRecipe(recipe); //add to redux
-    // alert("Updated");
-    // history.push(`/recipe/${id}`);
+    alert("Updated");
+    history.push(`/recipe/${recipeId}`);
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = () => {
-    if (location.pathname.includes("/edit")) {
-      //get recipe info from redux store
-      const currentItem = props.recipes.find((r) => r.id === recipeId);
-      setRecipe(currentItem);
-    }
+  const cancelEdit = () => {
+    history.push(`/recipe/${recipeId}`);
   };
 
   return (
     <Wrapper>
-      <Heading
-        title={location.pathname.includes("/add") ? "Add a new recipe" : "Edit"}
-      />
+      <Heading title={editMode ? "Edit" : "Add a new recipe"} />
       <Section>
         <Article padding={`${spacing.xl} 0`}>
           <Floating
@@ -214,15 +214,22 @@ const New = (props) => {
         </Article>
         <BtnContainer>
           <FilledButton
-            label={location.pathname.includes("/add") ? "Next" : "Edit"}
+            label={editMode ? "Save" : "Next"}
             fullwidth
             primaryColor={defaultTheme.secondaryColor}
             shape="pill"
             spacing={spacing.xxxxs}
-            handleClick={
-              location.pathname.includes("/add") ? handleNext : handleEdit
-            }
+            handleClick={editMode ? handleEdit : handleNext}
           />
+          {editMode && (
+            <Div className="flexCenter" padding={`${spacing.xl} 0`}>
+              <TextButton
+                label="Cancel"
+                primaryColor={primaryColor.yellow}
+                handleClick={cancelEdit}
+              />
+            </Div>
+          )}
         </BtnContainer>
       </Section>
     </Wrapper>

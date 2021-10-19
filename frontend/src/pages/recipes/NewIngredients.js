@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -8,12 +8,18 @@ import Heading from "../../components/layout/Heading";
 import {
   Section,
   Article,
+  Div,
   BtnContainer,
 } from "../../components/layout/Containers";
 
 //import components
 import { Input, Floating } from "../../components/Input";
-import { FilledButton, TextButton, IconButton } from "../../components/Button";
+import {
+  FilledButton,
+  TextButton,
+  IconButton,
+  OutlinedButton,
+} from "../../components/Button";
 import Select from "react-select";
 import ResSelect from "../../components/ResSelect";
 
@@ -33,15 +39,33 @@ import { metricMeasure } from "../../data/measureData";
 
 //redux
 import { connect } from "react-redux";
-import { addRecipe, addIngredients } from "../../reducers/recipeReducer";
+import {
+  addRecipe,
+  addIngredients,
+  editRecipe,
+} from "../../reducers/recipeReducer";
 
 const NewIngredients = (props) => {
   const history = useHistory();
-
-  //this recipe info
+  let location = useLocation();
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
-  const thisRecipe = props.recipes.find((item) => item.id === recipeId);
+  const editMode = location.pathname.includes("/edit");
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    if (editMode) {
+      //get recipe info from redux store
+      const currentItem = props.recipes.find((r) => r.id === recipeId);
+      setIngredients(currentItem.ingredients);
+    }
+  };
+
+  // //this recipe info
+  // const thisRecipe = props.recipes.find((item) => item.id === recipeId);
 
   //handle ingredients
   const [ingredients, setIngredients] = useState([
@@ -199,10 +223,20 @@ const NewIngredients = (props) => {
     setIngredients(newIngredients);
   };
 
-  //Next buttom
+  //Next button
   const handleNext = () => {
-    props.addIngredients(ingredients, recipeId);
-    history.push(`/recipes/${recipeId}/directions`);
+    if (editMode) {
+      props.editRecipe("ingredients", ingredients, recipeId);
+      alert("Updated");
+      history.push(`/recipe/${recipeId}`);
+    } else {
+      props.addIngredients(ingredients, recipeId);
+      history.push(`/recipes/${recipeId}/directions`);
+    }
+  };
+
+  const cancelEdit = () => {
+    history.push(`/recipe/${recipeId}`);
   };
 
   const selectStyles = {
@@ -227,7 +261,7 @@ const NewIngredients = (props) => {
     <>
       <Wrapper>
         <Heading
-          title="Add ingredients"
+          title={editMode ? "Edit" : "Add ingredients"}
           subtitle="Group ingredients? add title lorem "
         ></Heading>
       </Wrapper>
@@ -240,6 +274,7 @@ const NewIngredients = (props) => {
                   <Floating
                     label="Group title"
                     name="amount"
+                    value={group.group}
                     handleChange={(e) => {
                       handleGroup(e, group.id);
                     }}
@@ -268,7 +303,7 @@ const NewIngredients = (props) => {
                         )}
                       </div>
                       <div className="four flex">
-                        <div className="five">
+                        <div className="fourhalf">
                           <Input
                             id={item.id}
                             placeholder="Amount"
@@ -284,7 +319,7 @@ const NewIngredients = (props) => {
                             }}
                           />
                         </div>
-                        <div className="fourhalf">
+                        <div className="five">
                           <Select
                             name={item.id}
                             defaultValue={{ label: "g", value: "g", id: 1 }}
@@ -309,7 +344,7 @@ const NewIngredients = (props) => {
                       {idx === 0 ? (
                         <div className="one"></div>
                       ) : (
-                        <div className="one flexEnd">
+                        <div className="half flexEnd">
                           <IconButton
                             handleClick={() =>
                               handleDeleteItem(group.id, item.id)
@@ -357,7 +392,15 @@ const NewIngredients = (props) => {
           </div>
         </Section>
         <Add>
-          <FilledButton
+          {/* <FilledButton
+            label="Add Group"
+            primaryColor={primaryColor.yellow}
+            secondaryColor={primaryColor.lightyellow}
+            size="small"
+            shape="pill"
+            handleClick={handleAddGroup}
+          /> */}
+          <OutlinedButton
             label="Add Group"
             primaryColor={primaryColor.yellow}
             secondaryColor={primaryColor.lightyellow}
@@ -369,12 +412,21 @@ const NewIngredients = (props) => {
         <Wrapper>
           <BtnContainer>
             <FilledButton
-              label="Next"
+              label={editMode ? "Save" : "Next"}
               primaryColor={defaultTheme.secondaryColor}
               shape="pill"
               fullwidth
               handleClick={handleNext}
             />
+            {editMode && (
+              <Div className="flexCenter" padding={`${spacing.xl} 0`}>
+                <TextButton
+                  label="Cancel"
+                  primaryColor={primaryColor.yellow}
+                  handleClick={cancelEdit}
+                />
+              </Div>
+            )}
           </BtnContainer>
         </Wrapper>
       </WrapperFull>
@@ -406,6 +458,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addRecipe, addIngredients })(
-  NewIngredients
-);
+export default connect(mapStateToProps, {
+  addRecipe,
+  addIngredients,
+  editRecipe,
+})(NewIngredients);

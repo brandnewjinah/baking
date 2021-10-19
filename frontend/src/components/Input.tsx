@@ -220,7 +220,7 @@ const Global = css<StyleProps>`
     props.shape === "underline" ? "none" : `1px solid #d2d2d7`};
   border-bottom: 1px solid #d2d2d7;
   padding: ${(props) =>
-    props.align === "right" ? `0 0.75rem 0 0` : `0 0 0 0.7rem`};
+    props.align === "right" ? `0 0.5rem 0 0` : `0 0 0 0.7rem`};
 `;
 
 const Wrapper = styled.div<StyleProps>`
@@ -272,7 +272,7 @@ const InputTag = styled.input<StyleProps>`
 
   ::placeholder,
   ::-webkit-input-placeholder {
-    font-size: ${(props) => (props.small ? "0.875rem" : "0.925rem")};
+    font-size: ${(props) => (props.small ? "0.75rem" : "0.925rem")};
     color: ${neutral[200]};
   }
 `;
@@ -368,10 +368,10 @@ const FloatingContainer = styled.div<StyleProps>`
 
 const TextAreaTag = styled.textarea<StyleProps>`
   ${Global}
+  font-family: ${secondaryFont};
 
   &::placeholder,
   ::-webkit-input-placeholder {
-    font-family: ${secondaryFont};
     font-size: ${(props) => (props.small ? "0.875rem" : "0.925rem")};
     color: ${neutral[200]};
   }

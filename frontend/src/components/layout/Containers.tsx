@@ -6,6 +6,7 @@ import { neutral, spacing, primaryFont, primaryColor } from "../token";
 
 export interface Props {
   padding?: string;
+  className?: string;
 }
 
 type StyleProps = {
@@ -20,8 +21,20 @@ export const Article: FC<Props> = ({ children, padding }) => {
   return <ArticleContainer padding={padding}>{children}</ArticleContainer>;
 };
 
-export const Div: FC<Props> = ({ children, padding }) => {
-  return <DivContainer padding={padding}>{children}</DivContainer>;
+export const Div: FC<Props> = ({ children, padding, className }) => {
+  return (
+    <DivContainer padding={padding} className={className}>
+      {children}
+    </DivContainer>
+  );
+};
+
+export const Header: FC<Props> = ({ children, padding, className }) => {
+  return (
+    <HeaderContainer padding={padding} className={className}>
+      {children}
+    </HeaderContainer>
+  );
 };
 
 export const Select: FC<Props> = ({ children }) => {
@@ -30,6 +43,10 @@ export const Select: FC<Props> = ({ children }) => {
 
 export const BtnContainer: FC<Props> = ({ children }) => {
   return <ButtonContainer>{children}</ButtonContainer>;
+};
+
+export const Divider: FC<Props> = ({ children }) => {
+  return <DividerContainer>{children}</DividerContainer>;
 };
 
 const SectionContainer = styled.section<StyleProps>`
@@ -48,6 +65,11 @@ const ArticleContainer = styled.article<StyleProps>`
 `;
 
 const DivContainer = styled.div<StyleProps>`
+  width: 100%;
+  padding: ${(props) => props.padding};
+`;
+
+const HeaderContainer = styled.header<StyleProps>`
   width: 100%;
   padding: ${(props) => props.padding};
 `;
@@ -85,4 +107,8 @@ const SelectContainer = styled.div`
 
 const ButtonContainer = styled.div`
   padding: ${spacing.xxl} 0;
+`;
+
+const DividerContainer = styled.div`
+  border-bottom: 1px solid ${neutral[100]};
 `;

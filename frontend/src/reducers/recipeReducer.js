@@ -1,10 +1,12 @@
 // Action types
 const ADD_RECIPE = "ADD_RECIPE";
 const ADD_SERVING = "ADD_SERVING";
+const ADD_DETAILS = "ADD_DETAILS";
 const ADD_INGREDIENTS = "ADD_INGREDIENTS";
 const ADD_DIRECTIONS = "ADD_DIRECTIONS";
 const EDIT_RECIPE = "EDIT_RECIPE";
 const DELETE_RECIPE = "DELETE_RECIPE";
+const DELETE_SERVING = "DELETE_SERVING";
 
 // Action creators
 export const addRecipe = (item) => {
@@ -30,6 +32,18 @@ export const addServing = (item, id) => {
   };
 };
 
+export const addDetails = (item, id) => {
+  return (dispatch) => {
+    dispatch({
+      type: ADD_DETAILS,
+      payload: {
+        item,
+        id,
+      },
+    });
+  };
+};
+
 export const addIngredients = (item, id) => {
   return (dispatch) => {
     dispatch({
@@ -42,25 +56,26 @@ export const addIngredients = (item, id) => {
   };
 };
 
-export const addDirections = (item, item2, id) => {
+export const addDirections = (item, id) => {
   return (dispatch) => {
     dispatch({
       type: ADD_DIRECTIONS,
       payload: {
         item,
-        item2,
         id,
       },
     });
   };
 };
 
-export const editRecipe = (item) => {
+export const editRecipe = (name, item, id) => {
   return (dispatch) => {
     dispatch({
       type: EDIT_RECIPE,
       payload: {
+        name,
         item,
+        id,
       },
     });
   };
@@ -72,6 +87,17 @@ export const deleteRecipe = (item) => {
       type: DELETE_RECIPE,
       payload: {
         item,
+      },
+    });
+  };
+};
+
+export const deleteServing = (id) => {
+  return (dispatch) => {
+    dispatch({
+      type: DELETE_SERVING,
+      payload: {
+        id,
       },
     });
   };
@@ -106,6 +132,20 @@ const reducer = (state = initialState, action) => {
     return { ...state, recipes: newRecipes };
   }
 
+  if (action.type === ADD_DETAILS) {
+    let details = action.payload.item;
+    let thisId = action.payload.id;
+
+    let newRecipes = [...state.recipes];
+    let index = newRecipes.findIndex((i) => i.id === thisId);
+
+    let thisRecipe = newRecipes[index];
+    thisRecipe = { ...thisRecipe, details };
+
+    newRecipes[index] = thisRecipe;
+    return { ...state, recipes: newRecipes };
+  }
+
   if (action.type === ADD_INGREDIENTS) {
     let ingredients = action.payload.item;
 
@@ -123,25 +163,29 @@ const reducer = (state = initialState, action) => {
 
   if (action.type === ADD_DIRECTIONS) {
     let directions = action.payload.item;
-    let prep = action.payload.item2;
     let thisId = action.payload.id;
 
     let newRecipes = [...state.recipes];
     let index = newRecipes.findIndex((i) => i.id === thisId);
 
     let thisRecipe = newRecipes[index];
-    thisRecipe = { ...thisRecipe, directions, prep };
+    thisRecipe = { ...thisRecipe, directions };
 
     newRecipes[index] = thisRecipe;
     return { ...state, recipes: newRecipes };
   }
 
   if (action.type === EDIT_RECIPE) {
-    let updatedRecipe = action.payload.item;
+    let name = action.payload.name;
+    let item = action.payload.item;
+    let thisId = action.payload.id;
+
     let newRecipes = [...state.recipes];
-    const index = newRecipes.findIndex((item) => item.id === updatedRecipe.id);
+    let index = newRecipes.findIndex((i) => i.id === thisId);
+
     let thisRecipe = newRecipes[index];
-    thisRecipe = { ...thisRecipe, ...updatedRecipe };
+    thisRecipe = { ...thisRecipe, [name]: item };
+
     newRecipes[index] = thisRecipe;
     return { ...state, recipes: newRecipes };
   }
@@ -151,6 +195,18 @@ const reducer = (state = initialState, action) => {
     let newRecipes = [...state.recipes];
     newRecipes = newRecipes.filter((c) => c.id !== thisRecipe);
 
+    return { ...state, recipes: newRecipes };
+  }
+
+  if (action.type === DELETE_SERVING) {
+    let thisId = action.payload.id;
+    let newRecipes = [...state.recipes];
+    let index = newRecipes.findIndex((i) => i.id === thisId);
+
+    let thisRecipe = newRecipes[index];
+    delete thisRecipe.prep;
+
+    newRecipes[index] = thisRecipe;
     return { ...state, recipes: newRecipes };
   }
 

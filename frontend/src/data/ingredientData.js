@@ -1,21 +1,21 @@
 export const flour = [
   {
-    id: 100,
+    id: 101,
     label: "All Purpose Flour",
     value: "All Purpose Flour",
   },
   {
-    id: 101,
+    id: 102,
     label: "Bread Flour",
     value: "Bread Flour",
   },
   {
-    id: 102,
+    id: 103,
     label: "Cake Flour",
     value: "Cake Flour",
   },
   {
-    id: 103,
+    id: 104,
     label: "Almond Flour",
     value: "Almond Flour",
   },
@@ -23,22 +23,22 @@ export const flour = [
 
 export const leavener = [
   {
-    id: 120,
+    id: 111,
     label: "Active Dry Yeast",
     value: "Active Dry Yeast",
   },
   {
-    id: 121,
+    id: 112,
     label: "Instant Dry Yeast",
     value: "Instant Dry Yeast",
   },
   {
-    id: 122,
+    id: 113,
     label: "Baking Powder",
     value: "Baking Powder",
   },
   {
-    id: 123,
+    id: 114,
     label: "Baking Soda",
     value: "Baking Soda",
   },
@@ -46,22 +46,22 @@ export const leavener = [
 
 export const sweetener = [
   {
-    id: 140,
+    id: 121,
     label: "Gradulated Sugar",
     value: "Gradulated Sugar",
   },
   {
-    id: 141,
+    id: 122,
     label: "Powdered Sugar",
     value: "Powdered Sugar",
   },
   {
-    id: 142,
+    id: 123,
     label: "Brown Sugar",
     value: "Brown Sugar",
   },
   {
-    id: 143,
+    id: 124,
     label: "Honey",
     value: "Honey",
   },
@@ -69,17 +69,17 @@ export const sweetener = [
 
 export const eggs = [
   {
-    id: 160,
+    id: 131,
     label: "Eggs",
     value: "Eggs",
   },
   {
-    id: 161,
+    id: 132,
     label: "Egg White",
     value: "Egg White",
   },
   {
-    id: 162,
+    id: 133,
     label: "Egg Yolk",
     value: "Egg Yolk",
   },
@@ -87,22 +87,22 @@ export const eggs = [
 
 export const fatOil = [
   {
-    id: 160,
+    id: 141,
     label: "Salted Butter",
     value: "Salted Butter",
   },
   {
-    id: 161,
+    id: 142,
     label: "Unsalted Butter",
     value: "Unsalted Butter",
   },
   {
-    id: 162,
+    id: 143,
     label: "Cultured Butter",
     value: "Cultured Butter",
   },
   {
-    id: 163,
+    id: 144,
     label: "Vegetable Oil",
     value: "Vegetable Oil",
   },
@@ -110,17 +110,17 @@ export const fatOil = [
 
 export const liquid = [
   {
-    id: 180,
+    id: 151,
     label: "Milk",
     value: "Milk",
   },
   {
-    id: 181,
+    id: 152,
     label: "Heavy Cream",
     value: "Heavy Cream",
   },
   {
-    id: 182,
+    id: 153,
     label: "Water",
     value: "Water",
   },
@@ -128,42 +128,80 @@ export const liquid = [
 
 export const flavor = [
   {
-    id: 180,
+    id: 161,
     label: "Vanilla Extract",
     value: "Vanilla Extract",
   },
   {
-    id: 181,
+    id: 162,
     label: "Vanilla Bean",
     value: "Vanilla Bean",
   },
   {
-    id: 182,
+    id: 163,
     label: "Rum",
     value: "Rum",
+  },
+  {
+    id: 164,
+    label: "Green Tea Powder",
+    value: "Green Tea Powder",
+  },
+  {
+    id: 165,
+    label: "Earl Grey Tea Powder",
+    value: "Earl Grey Tea Powder",
+  },
+  {
+    id: 166,
+    label: "Coffee Powder",
+    value: "Coffee Powder",
   },
 ];
 
 export const chocolate = [
   {
-    id: 180,
+    id: 171,
     label: "Chocolate Chip",
     value: "Chocolate Chip",
   },
   {
-    id: 181,
+    id: 172,
     label: "Chocolate",
     value: "Chocolate",
   },
   {
-    id: 182,
+    id: 173,
     label: "White Chocolate",
     value: "White Chocolate",
   },
   {
-    id: 183,
+    id: 174,
     label: "Cocoa Powder",
     value: "Cocoa Powder",
+  },
+];
+
+export const fruits = [
+  {
+    id: 181,
+    label: "Strawberry",
+    value: "Strawberry",
+  },
+  {
+    id: 182,
+    label: "Blueberry",
+    value: "Blueberry",
+  },
+  {
+    id: 183,
+    label: "Banana",
+    value: "Banana",
+  },
+  {
+    id: 184,
+    label: "Mango",
+    value: "Mango",
   },
 ];
 
@@ -200,5 +238,9 @@ export const groupedOptions = [
   {
     label: "Chocolate",
     options: chocolate,
+  },
+  {
+    label: "Fruits",
+    options: fruits,
   },
 ];

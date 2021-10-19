@@ -49,6 +49,14 @@ const Global = css`
     text-transform: uppercase;
   }
 
+  .capitalize {
+    text-transform: capitalize;
+  }
+
+  .bold {
+    font-weight: 700;
+  }
+
   .half {
     flex: 0 0 4.5%;
   }
@@ -59,6 +67,10 @@ const Global = css`
 
   .two {
     flex: 0 0 19.5%;
+  }
+
+  .three {
+    flex: 0 0 29.5%;
   }
 
   .four {
@@ -81,6 +93,10 @@ const Global = css`
     flex: 0 0 59.5%;
   }
 
+  .seven {
+    flex: 0 0 69.5%;
+  }
+
   .sevenhalf {
     flex: 0 0 74.5%;
   }
@@ -100,26 +116,21 @@ const Global = css`
   .vspaces {
     padding: ${spacing.xs} 0;
   }
+
+  .p2 {
+    color: ${neutral[500]};
+    line-height: 1.5rem;
+  }
+
+  .p3 {
+    letter-spacing: 0.03rem;
+    color: ${neutral[700]};
+  }
 `;
 
 const Container = styled.div`
   ${Global}
   padding: 2rem 1.35rem;
-
-  .p3 {
-    letter-spacing: 0.03rem;
-    color: ${neutral[400]};
-  }
-
-  .three {
-    flex: 0 0 29.5%;
-    padding: ${spacing.xxs} 0;
-  }
-
-  .seven {
-    flex: 0 0 69.5%;
-    padding: ${spacing.xxs} 0;
-  }
 `;
 
 const ContainerFull = styled.div`

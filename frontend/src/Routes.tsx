@@ -25,8 +25,6 @@ const Routes = () => {
           <Route exact path="/design" component={Design} />
           <Route exact path="/recipes/" component={Recipes} />
           <Route exact path="/recipes/add" component={New} />
-
-          <Route exact path="/recipe/:recipeId" component={RecipeDetail} />
           <Route
             exact
             path="/recipes/:recipeId/serving"
@@ -39,17 +37,25 @@ const Routes = () => {
           />
           <Route
             exact
+            path="/recipes/:recipeId/directions"
+            component={NewDirections}
+          />
+          <Route exact path="/recipe/:recipeId" component={RecipeDetail} />
+          {/* edit */}
+          <Route exact path="/recipe/edit/:recipeId/info" component={New} />
+          <Route
+            exact
+            path="/recipe/edit/:recipeId/details"
+            component={NewServing}
+          />
+          <Route
+            exact
             path="/recipe/edit/:recipeId/ingredients"
             component={NewIngredients}
           />
           <Route
             exact
-            path="/recipes/:recipeId/directions"
-            component={NewDirections}
-          />
-          <Route
-            exact
-            path="/recipes/edit/:recipeId/directions"
+            path="/recipe/edit/:recipeId/directions"
             component={NewDirections}
           />
         </Layout>

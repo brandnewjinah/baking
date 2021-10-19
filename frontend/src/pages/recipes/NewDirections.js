@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
-import styled, { css } from "styled-components";
 
 //import layout components
 import { Wrapper } from "../../components/layout/Wrapper";
@@ -14,66 +13,67 @@ import {
 
 //import componts
 import { Input, TextArea } from "../../components/Input";
-import { FilledButton, TextButton, IconButton } from "../../components/Button";
+import {
+  FilledButton,
+  OutlinedButton,
+  TextButton,
+} from "../../components/Button";
 
 //import token
-import { spacing, neutral, defaultTheme } from "../../components/token";
-import { Close } from "../../assets/Icons";
+import {
+  spacing,
+  neutral,
+  defaultTheme,
+  primaryColor,
+} from "../../components/token";
 
 //redux
 import { connect } from "react-redux";
-import { addDirections } from "../../reducers/recipeReducer";
+import { addDirections, editRecipe } from "../../reducers/recipeReducer";
+import { isTemplateSpan } from "typescript";
 
 const NewDirections = (props) => {
   let history = useHistory();
   let location = useLocation();
-
-  //this Recipe
   let { recipeId } = useParams();
   recipeId = parseInt(recipeId);
-  const thisRecipe = props.recipes.find(
-    (item) => item.id === parseInt(recipeId)
-  );
+  const editMode = location.pathname.includes("/edit");
 
-  //prep
-  const [prep, setPrep] = useState({
-    degrees: "",
-    degreeUnit: "°C",
-    duration: "",
-    durationUnit: "min",
-  });
+  useEffect(() => {
+    getData();
+  }, []);
 
-  const handlePrepInput = ({ currentTarget: input }) => {
-    let newPrep = { ...prep };
-    newPrep[input.name] = input.value;
-    setPrep(newPrep);
+  // get data
+  const getData = async () => {
+    if (editMode) {
+      //from redux store
+      const currentItem = await props.recipes.find((r) => r.id === recipeId);
+      setDirections(currentItem.directions);
+    }
   };
 
   //add directions
   const [directions, setDirections] = useState([
-    { id: 1, direction: "", timestamp: "" },
+    { id: 1, direction: "", minutes: "", seconds: "" },
   ]);
 
-  const handleInput = ({ currentTarget: input }) => {
-    let id = input.id.split("?")[0];
+  const handleInput = ({ currentTarget: input }, id) => {
+    //find current item
     let newDirections = [...directions];
-    let index = newDirections.findIndex((i) => i.id === parseInt(id));
-    let currentItem = { ...newDirections[index] };
+    let itemIndex = newDirections.findIndex((item) => item.id === id);
+    let thisItem = newDirections[itemIndex];
 
-    //if input.name is timestamp
-    if (input.name === "timestamp") {
-      let replaceTime = input.value.replace(/\:/g, "");
-
-      if (replaceTime.length >= 3 && replaceTime.length < 5) {
-        let min = replaceTime.substring(0, 2);
-        let sec = replaceTime.substring(2, 4);
-        input.value = min + ":" + sec;
-      }
-      currentItem.timestamp = input.value;
+    if (input.name === "direction") {
+      thisItem[input.name] = input.value;
+    } else if (input.name === "seconds" || "minutes") {
+      let value = input.value.substring(0, 2);
+      //if value is one digit add 0 to the front
+      // /^\d$/.value && (thisItem[input.name] = `0${value}`);
+      value !== "" && undefined && NaN && (value = parseInt(value));
+      value > 59 ? (thisItem[input.name] = "") : (thisItem[input.name] = value);
     }
 
-    currentItem[input.name] = input.value;
-    newDirections[index] = currentItem;
+    newDirections[itemIndex] = thisItem;
     setDirections(newDirections);
   };
 
@@ -83,7 +83,7 @@ const NewDirections = (props) => {
     let id = newDirections[newDirections.length - 1].id + 1;
     newDirections = [
       ...newDirections,
-      { id: id, direction: "", timestamp: "" },
+      { id: id, direction: "", minutes: "", seconds: "" },
     ];
     setDirections(newDirections);
   };
@@ -95,69 +95,43 @@ const NewDirections = (props) => {
     setDirections(newDirections);
   };
 
-  const handleSave = () => {
-    props.addDirections(directions, prep, recipeId);
-    history.push(`/recipes`);
+  const checkTimeStamp = () => {
+    let newDirections = directions.map((item) =>
+      item.minutes.match(/^\d$/)
+        ? { ...item, minutes: `0${item.minutes}` }
+        : item.seconds.match(/^\d$/)
+        ? { ...item, seconds: `0${item.seconds}` }
+        : item.minutes.match("")
+        ? { ...item, minutes: "00" }
+        : { ...item }
+    );
+    return newDirections;
   };
 
-  // get data
-  const getData = async () => {
-    if (location.pathname.includes("/edit/")) {
-      //from redux store
-      const currentItem = await props.recipes.find((r) => r.id === recipeId);
-      setDirections(currentItem.directions);
-      setPrep(currentItem.prep);
+  //Next button
+  const handleSave = () => {
+    const newDirections = checkTimeStamp();
+    if (editMode) {
+      props.editRecipe("directions", newDirections, recipeId);
+      alert("Updated");
+      history.push(`/recipe/${recipeId}`);
+    } else {
+      props.addDirections(newDirections, recipeId);
+      history.push(`/recipes`);
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, [recipeId]);
+  const cancelEdit = () => {
+    history.push(`/recipe/${recipeId}`);
+  };
 
   return (
     <Wrapper>
       <Heading
-        title="Add directions"
-        subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris tempor erat lacus, consequat vestibulum ipsum tempor vitae."
+        title={editMode ? "Edit directions" : "Add directions"}
       ></Heading>
-      <Section padding={`${spacing.xl} 0`}>
-        <h5 className="vspacexs">Oven Prep</h5>
-        <Article>
-          <div className="flex">
-            <div className="fourhalf">
-              <Input
-                name="degrees"
-                placeholder="temperature"
-                suffix={prep.degreeUnit}
-                shape="underline"
-                type="number"
-                inputmode="decimal"
-                value={prep.degrees}
-                handleChange={handlePrepInput}
-              />
-            </div>
-            <div className="fourhalf">
-              <Input
-                name="duration"
-                placeholder="duration"
-                suffix={prep.durationUnit}
-                shape="underline"
-                type="number"
-                inputmode="decimal"
-                value={prep.duration}
-                handleChange={handlePrepInput}
-              />
-            </div>
-          </div>
-        </Article>
-      </Section>
 
       <Section padding={`${spacing.xl} 0`}>
-        <h5 className="vspacexs">Directions</h5>
-        {/* <p className="p3">
-          Add a timestamp to jump to straight to a corresponding place in a
-          video
-        </p> */}
         {directions.map((item, idx) => (
           <Article key={idx} padding={`0 0 ${spacing.l}`}>
             <div className="flex">
@@ -165,90 +139,99 @@ const NewDirections = (props) => {
               <div className="nine flex">
                 <div className="fourhalf">
                   <Input
-                    id={`${item.id}?timestamp`}
-                    name="timestamp"
-                    suffix="minute"
+                    name="minutes"
+                    suffix="minutes"
+                    placeholder="mm"
                     maxLength={2}
                     type="number"
                     inputmode="decimal"
                     shape="underline"
-                    value={item.timestamp}
-                    handleChange={handleInput}
+                    value={item.minutes}
+                    handleChange={(e) => {
+                      handleInput(e, item.id);
+                    }}
                   />
                 </div>
                 <div className="fourhalf">
                   <Input
-                    id={`${item.id}?timestamp`}
-                    name="timestamp"
+                    name="seconds"
                     suffix="seconds"
+                    placeholder="ss"
                     maxLength={2}
                     type="number"
                     inputmode="decimal"
                     shape="underline"
-                    value={item.timestamp}
-                    handleChange={handleInput}
+                    value={item.seconds}
+                    handleChange={(e) => {
+                      handleInput(e, item.id);
+                    }}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flexAlignTop">
-              <div className="one flexCenter">
-                {idx === 0 ? (
-                  <div></div>
-                ) : (
-                  <IconButton handleClick={() => handleDirDelete(item.id)}>
-                    <Close
-                      width={10}
-                      height={10}
-                      color={neutral[300]}
-                      stroke={3}
-                    />
-                  </IconButton>
-                )}
-              </div>
+              <div className="one"></div>
               <Div className="nine" padding={`${spacing.xl} 0`}>
                 <TextArea
-                  id={`${item.id}?direction`}
                   name="direction"
-                  placeholder="temperature"
+                  placeholder="Directions"
                   shape="underline"
                   rows={4}
                   value={item.direction}
-                  handleChange={handleInput}
+                  handleChange={(e) => {
+                    handleInput(e, item.id);
+                  }}
                 />
+
+                {idx === 0 ? (
+                  <div></div>
+                ) : (
+                  <Div className="flexEnd" padding={`${spacing.m} 0`}>
+                    <TextButton
+                      label="Delete"
+                      primaryColor={neutral[300]}
+                      handleClick={() => handleDirDelete(item.id)}
+                    />
+                  </Div>
+                )}
               </Div>
             </div>
           </Article>
         ))}
-        <Add>
-          <TextButton label="Add More" handleClick={handleAdd} />
-        </Add>
+        <Div className="flexCenter">
+          <OutlinedButton
+            label="Add Directions"
+            primaryColor={primaryColor.yellow}
+            secondaryColor={primaryColor.lightyellow}
+            size="small"
+            shape="pill"
+            handleClick={handleAdd}
+          />
+        </Div>
       </Section>
 
       <BtnContainer>
         <FilledButton
-          label="Save Recipe"
+          label={editMode ? "Save" : "Save Recipe"}
           primaryColor={defaultTheme.secondaryColor}
           shape="pill"
           fullwidth
           handleClick={handleSave}
         />
+        {editMode && (
+          <Div className="flexCenter" padding={`${spacing.xl} 0`}>
+            <TextButton
+              label="Cancel"
+              primaryColor={primaryColor.yellow}
+              handleClick={cancelEdit}
+            />
+          </Div>
+        )}
       </BtnContainer>
     </Wrapper>
   );
 };
-
-const Flex = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Add = styled.div`
-  ${Flex}
-  margin: 2rem 0;
-`;
 
 const mapStateToProps = (state) => {
   return {
@@ -256,4 +239,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addDirections })(NewDirections);
+export default connect(mapStateToProps, { addDirections, editRecipe })(
+  NewDirections
+);

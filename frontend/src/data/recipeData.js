@@ -59,18 +59,19 @@ export const categoryOptions = [
 export const authorOptions = [
   {
     id: 1,
-    name: "Myself",
-    value: "Myself",
+    name: "Calorie Restaurant",
+    value: "Calorie Restaurant",
   },
+
   {
     id: 2,
-    name: "Sodamhan",
-    value: "Sodamhan",
+    name: "Emojoie",
+    value: "Emojoie",
   },
   {
     id: 3,
-    name: "Emojoie",
-    value: "Emojoie",
+    name: "HidaMari",
+    value: "HidaMari",
   },
   {
     id: 4,
@@ -84,7 +85,12 @@ export const authorOptions = [
   },
   {
     id: 6,
-    name: "HidaMari",
-    value: "HidaMari",
+    name: "Myself",
+    value: "Myself",
+  },
+  {
+    id: 7,
+    name: "Sodamhan",
+    value: "Sodamhan",
   },
 ];
