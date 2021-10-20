@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-import { defaultTheme } from "./token";
 
 //import libraries
 import styled from "styled-components";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 //import layout components
 import { Wrapper, WrapperFull } from "../../components/layout/Wrapper";
@@ -27,7 +27,6 @@ import ResSelect from "../../components/ResSelect";
 import {
   spacing,
   neutral,
-  blue,
   defaultTheme,
   primaryColor,
 } from "../../components/token";
@@ -53,16 +52,15 @@ const NewIngredients = (props) => {
   const editMode = location.pathname.includes("/edit");
 
   useEffect(() => {
+    const getData = () => {
+      if (editMode) {
+        //get recipe info from redux store
+        const currentItem = props.recipes.find((r) => r.id === recipeId);
+        setIngredients(currentItem.ingredients);
+      }
+    };
     getData();
-  }, []);
-
-  const getData = () => {
-    if (editMode) {
-      //get recipe info from redux store
-      const currentItem = props.recipes.find((r) => r.id === recipeId);
-      setIngredients(currentItem.ingredients);
-    }
-  };
+  }, [editMode, props.recipes, recipeId]);
 
   // //this recipe info
   // const thisRecipe = props.recipes.find((item) => item.id === recipeId);
@@ -272,7 +270,7 @@ const NewIngredients = (props) => {
               <Group>
                 <div className="nameContainer">
                   <Floating
-                    label="Group title"
+                    label="Group title (optional)"
                     name="amount"
                     value={group.group}
                     handleChange={(e) => {

@@ -125,15 +125,4 @@ const Article = styled.article`
   }
 `;
 
-const Item = styled.div`
-  font-size: ${typeScale.sbody};
-  border-bottom: 1px solid ${neutral[100]};
-  padding: ${spacing.m} ${spacing.xl};
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${neutral[100]};
-  }
-`;
-
 export default ResSelect;

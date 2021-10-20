@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useParams, Link, useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import ReactPlayer from "react-player";
 import "./styles.css";
 import styled from "styled-components";
@@ -96,7 +96,7 @@ const RecipeDetail = (props) => {
         <Section padding={`${spacing.xl} 0`}>
           <h5 className="vspacexs">Basic</h5>
           {thisRecipe.details.map((item, idx) => (
-            <Div className="flex" padding={`${spacing.xxxxs} 0`}>
+            <Div className="flex" padding={`${spacing.xxxxs} 0`} key={idx}>
               <div className="three">
                 <p className="p2 capitalize">{item.name}</p>
               </div>
@@ -122,12 +122,14 @@ const RecipeDetail = (props) => {
         <Section padding={`${spacing.xl} 0`}>
           <h5 className="vspacexs">Ingredients</h5>
           {thisRecipe.ingredients.map((group, idx) => (
-            <Article padding={`0 0 ${spacing.l}`}>
-              <Header className="p3 bold" padding={`${spacing.xxs} 0`}>
-                {group.group}
-              </Header>
+            <Article padding={`0 0 ${spacing.l}`} key={idx}>
+              {group.group && (
+                <Header className="p3 bold" padding={`${spacing.xxs} 0`}>
+                  {group.group}
+                </Header>
+              )}
               {group.items.map((item, idx) => (
-                <Div className="flex" padding={`${spacing.xxxxs} 0`}>
+                <Div className="flex" padding={`${spacing.xxxxs} 0`} key={idx}>
                   <div className="six">
                     <p className="p2">{item.ingredient}</p>
                   </div>
@@ -150,7 +152,7 @@ const RecipeDetail = (props) => {
         <Section padding={`${spacing.xl} 0`}>
           <h5 className="vspacexs">Directions</h5>
           {thisRecipe.directions.map((item, idx) => (
-            <Div className="p2" padding={`0 0 ${spacing.l}`}>
+            <Div className="p2" padding={`0 0 ${spacing.l}`} key={idx}>
               <span className="bold">{`${item.id}. `}</span>
               <span>{item.direction}</span>
               <span>

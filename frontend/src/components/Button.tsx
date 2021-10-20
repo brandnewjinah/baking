@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import styled from "styled-components";
 
 //import token
-import { defaultTheme, neutral, primaryColor } from "./token";
+import { defaultTheme, neutral } from "./token";
 
 export interface Props {
   primaryColor?: string;

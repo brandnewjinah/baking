@@ -88,11 +88,9 @@ const GlobalStyle = createGlobalStyle`
     .p3 {
         font-size: ${typeScaleMobile.helper}; 
     }   
-     .label {
+    .label {
         font-size: ${typeScaleMobile.label}; 
     }
-    
-
 }
 `;
 

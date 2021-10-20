@@ -35,16 +35,15 @@ const New = (props) => {
   const editMode = location.pathname.includes("/edit");
 
   useEffect(() => {
+    const getData = () => {
+      if (editMode) {
+        //get recipe info from redux store
+        const currentItem = props.recipes.find((r) => r.id === recipeId);
+        setRecipe(currentItem);
+      }
+    };
     getData();
-  }, []);
-
-  const getData = () => {
-    if (editMode) {
-      //get recipe info from redux store
-      const currentItem = props.recipes.find((r) => r.id === recipeId);
-      setRecipe(currentItem);
-    }
-  };
+  }, [editMode, props.recipes, recipeId]);
 
   //this recipe
   const [recipe, setRecipe] = useState({

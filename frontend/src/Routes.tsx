@@ -8,7 +8,6 @@ import Layout from "./components/Layout";
 import Design from "./pages/Design";
 
 //import pages
-import Home from "./pages/Home";
 import New from "./pages/recipes/New";
 import NewServing from "./pages/recipes/NewServingSize";
 import NewIngredients from "./pages/recipes/NewIngredients";
@@ -21,9 +20,8 @@ const Routes = () => {
     <Router>
       <Switch>
         <Layout>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={Recipes} />
           <Route exact path="/design" component={Design} />
-          <Route exact path="/recipes/" component={Recipes} />
           <Route exact path="/recipes/add" component={New} />
           <Route
             exact

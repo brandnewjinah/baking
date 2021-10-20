@@ -30,7 +30,6 @@ import {
 //redux
 import { connect } from "react-redux";
 import { addDirections, editRecipe } from "../../reducers/recipeReducer";
-import { isTemplateSpan } from "typescript";
 
 const NewDirections = (props) => {
   let history = useHistory();
@@ -40,17 +39,15 @@ const NewDirections = (props) => {
   const editMode = location.pathname.includes("/edit");
 
   useEffect(() => {
+    const getData = async () => {
+      if (editMode) {
+        //from redux store
+        const currentItem = await props.recipes.find((r) => r.id === recipeId);
+        setDirections(currentItem.directions);
+      }
+    };
     getData();
-  }, []);
-
-  // get data
-  const getData = async () => {
-    if (editMode) {
-      //from redux store
-      const currentItem = await props.recipes.find((r) => r.id === recipeId);
-      setDirections(currentItem.directions);
-    }
-  };
+  }, [editMode, props.recipes, recipeId]);
 
   //add directions
   const [directions, setDirections] = useState([

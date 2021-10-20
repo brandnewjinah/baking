@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import styled from "styled-components";
 
 //import token
-import { neutral, spacing, primaryFont, primaryColor } from "../token";
+import { neutral, spacing, primaryColor } from "../token";
 
 export interface Props {
   padding?: string;

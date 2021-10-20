@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 //import token
-import { neutral, spacing, typeScaleMobile } from "../token";
+import { neutral, spacing } from "../token";
 
 export const Wrapper = ({ children }) => {
   return <Container>{children}</Container>;
@@ -106,7 +106,7 @@ const Global = css`
   }
 
   .vspacexxs {
-    padding-bottom: ${spacing.xxs};
+    padding: ${spacing.xxs} 0;
   }
 
   .vspacexs {
@@ -114,7 +114,11 @@ const Global = css`
   }
 
   .vspaces {
-    padding: ${spacing.xs} 0;
+    padding: ${spacing.s} 0;
+  }
+
+  .vspacexxxl {
+    padding: ${spacing.xxxl} 0;
   }
 
   .p2 {
@@ -125,6 +129,11 @@ const Global = css`
   .p3 {
     letter-spacing: 0.03rem;
     color: ${neutral[700]};
+  }
+
+  a {
+    text-decoration: none;
+    color: ${neutral[600]};
   }
 `;
 

@@ -81,12 +81,23 @@ export const editRecipe = (name, item, id) => {
   };
 };
 
-export const deleteRecipe = (item) => {
+// export const deleteRecipe = (item) => {
+//   return (dispatch) => {
+//     dispatch({
+//       type: DELETE_RECIPE,
+//       payload: {
+//         item,
+//       },
+//     });
+//   };
+// };
+
+export const deleteRecipe = (id) => {
   return (dispatch) => {
     dispatch({
       type: DELETE_RECIPE,
       payload: {
-        item,
+        id,
       },
     });
   };
@@ -190,12 +201,20 @@ const reducer = (state = initialState, action) => {
     return { ...state, recipes: newRecipes };
   }
 
-  if (action.type === DELETE_RECIPE) {
-    let thisRecipe = action.payload.item;
-    let newRecipes = [...state.recipes];
-    newRecipes = newRecipes.filter((c) => c.id !== thisRecipe);
+  // if (action.type === DELETE_RECIPE) {
+  //   let thisRecipe = action.payload.item;
+  //   let newRecipes = [...state.recipes];
+  //   newRecipes = newRecipes.filter((c) => c.id !== thisRecipe);
 
-    return { ...state, recipes: newRecipes };
+  //   return { ...state, recipes: newRecipes };
+  // }
+
+  if (action.type === DELETE_RECIPE) {
+    let newRecipes = [...state.recipes];
+    console.log(newRecipes);
+    // newRecipes = newRecipes.filter((c) => c.id !== id);
+
+    // return { ...state, recipes: newRecipes };
   }
 
   if (action.type === DELETE_SERVING) {
